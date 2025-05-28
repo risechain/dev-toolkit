@@ -18,16 +18,16 @@ export const sideNavigation: Record<string, NavItem[]> = {
       href: '/shred-api/api-docs',
       children: [
         { title: 'Getting Started', href: '/shred-api/api-docs#getting-started' },
-        { title: 'Endpoints', href: '/shred-api/api-docs#endpoints' },
-        { title: 'Authentication', href: '/shred-api/api-docs#authentication' },
+        { title: 'RPC Methods', href: '/shred-api/api-docs#rpc-methods' },
+        { title: 'WebSocket', href: '/shred-api/api-docs#websocket' },
       ]
     },
     { title: 'Code Examples', href: '/shred-api/code-examples' },
-    { title: 'Data', href: '/shred-api/data' },
+    { title: 'Data Formats', href: '/shred-api/data' },
   ],
   'fast-vrf': [
     { title: 'Explainer', href: '/fast-vrf/explainer' },
-    { title: 'API Docs', href: '/fast-vrf/api-docs' },
+    { title: 'Integration Guide', href: '/fast-vrf/integration' },
     { title: 'Code Examples', href: '/fast-vrf/code-examples' },
   ],
   'time-oracle': [

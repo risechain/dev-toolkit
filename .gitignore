@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+flatten_codebase.py
+.gitignore
+
+
+# Helpers
+
+context/
+screenshots/
+flattened-src.md
+flatten_codebase.py

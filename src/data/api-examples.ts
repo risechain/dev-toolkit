@@ -1,37 +1,84 @@
 export const shredApiExamples = {
   getShredData: `
-// Get real-time shred data
-const ws = new WebSocket('wss://rise-api.com/shreds');
+// Connect to Shreds WebSocket endpoint
+const ws = new WebSocket('wss://shreds.testnet.riselabs.xyz');
+
+ws.onopen = () => {
+  console.log('Connected to Shreds API');
+};
+
 ws.onmessage = (event) => {
   const shredData = JSON.parse(event.data);
-  console.log('New shred:', shredData);
+  console.log('New transaction in mempool:', shredData);
+  
+  // Filter for transactions relevant to your dApp
+  if (shredData.to === YOUR_CONTRACT_ADDRESS) {
+    processPreConfirmation(shredData);
+  }
 };
   `,
   
   subscribeToAddress: `
-// Subscribe to address updates
-const subscription = {
-  type: 'subscribe',
-  address: '0x1234...5678',
-  events: ['transfer', 'approval']
-};
-ws.send(JSON.stringify(subscription));
+// Subscribe to logs matching filter criteria
+ws.send(JSON.stringify({
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "rise_subscribe",
+  "params": [
+    "logs",
+    {
+      "address": "0x1234...5678",
+      "topics": [
+        "0xabcd..." // Event signature hash
+      ]
+    }
+  ]
+}));
+
+// Subscribe to all newly created Shreds
+ws.send(JSON.stringify({
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "rise_subscribe",
+  "params": ["shreds"]
+}));
   `
 };
 
 export const vrfExamples = {
   requestRandomness: `
-// Request verifiable randomness
-const vrfRequest = {
-  seed: Date.now(),
-  callback: '0xYourContract',
-  gas_limit: 100000
-};
+// Smart Contract Integration
+import {IVRFConsumer} from "./VRFCoordinator.sol";
 
-const response = await fetch('/api/vrf/request', {
-  method: 'POST',
-  body: JSON.stringify(vrfRequest)
-});
+contract MyGame is IVRFConsumer {
+    mapping(uint256 => address) public requestIdToPlayer;
+    
+    // Required callback function
+    function vrfFulfill(uint256 requestId, uint256[] calldata randomNumbers) external {
+        address player = requestIdToPlayer[requestId];
+        uint256 diceRoll = (randomNumbers[0] % 6) + 1;
+        
+        // Process the dice roll result
+        processDiceRoll(player, diceRoll);
+    }
+    
+    function rollDice(uint256 clientSeed) external {
+        uint256 requestId = vrfCoordinator.requestRandomNumbers(1, clientSeed);
+        requestIdToPlayer[requestId] = msg.sender;
+    }
+}
+  `,
+  
+  backendSetup: `
+// Run the Shreds-enabled VRF backend
+make run-shred-staging
+
+// The backend will:
+// 1. Connect to Shreds WebSocket endpoint
+// 2. Listen for VRF RequestRaised events
+// 3. Generate cryptographically secure random numbers
+// 4. Create ECDSA proofs
+// 5. Submit fulfillment transactions with optimized gas
   `
 };
 
