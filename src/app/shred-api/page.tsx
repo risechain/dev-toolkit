@@ -7,28 +7,28 @@ export default function ShredAPIPage() {
   const sectionLinks = [
     {
       title: 'Explainer',
-      description: 'Learn how Shred API enables millisecond-fast pre-confirmation data access',
+      description: 'Discover how Shred API transforms blockchain UX with sub-10ms transaction streaming',
       href: '/shred-api/explainer',
       icon: <Book size={32} />,
       color: '#3b82f6'
     },
     {
       title: 'API Documentation',
-      description: 'Complete reference for WebSocket endpoints, RPC methods, and data formats',
+      description: 'Complete reference for WebSocket connections, RPC methods, and real-time subscriptions',
       href: '/shred-api/api-docs',
       icon: <Zap size={32} />,
       color: '#3b82f6'
     },
     {
       title: 'Code Examples',
-      description: 'Ready-to-use code snippets for JavaScript, Python, and other languages',
+      description: 'Production-ready integration patterns with automatic reconnection and error handling',
       href: '/shred-api/code-examples',
       icon: <Code size={32} />,
       color: '#3b82f6'
     },
     {
       title: 'Data Formats',
-      description: 'Understand the structure of transaction and block data returned by the API',
+      description: 'Detailed schemas for shred objects, event logs, and transaction notifications',
       href: '/shred-api/data',
       icon: <Database size={32} />,
       color: '#3b82f6'
@@ -38,7 +38,7 @@ export default function ShredAPIPage() {
   return (
     <SectionLandingPage
       title="Shred API"
-      description="Get millisecond-fast access to pre-confirmation transaction data via WebSocket streaming. Monitor pending transactions before they're included in blocks."
+      description="Stream pre-confirmation transaction data in real-time. Build responsive dApps that react to blockchain events in milliseconds, not seconds. Perfect for gaming, DeFi, and any application requiring instant feedback."
       currentSection="shred-api"
       heroContent={<ShredAPIHero />}
       links={sectionLinks}

@@ -1,290 +1,385 @@
+'use client';
+
 import DocPage from '@/components/templates/DocPage';
 import CodeBlock from '@/components/ui/CodeBlock';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { motion } from 'framer-motion';
 
 export default function FastVRFIntegration() {
   return (
     <DocPage
       title="Fast VRF Integration Guide"
-      description="Step-by-step guide to implement Fast VRF in your smart contracts and backend"
+      description="Complete guide to integrating RISE VRF into your smart contracts"
       currentSection="fast-vrf"
     >
-      <section className="space-y-12">
-        <div>
-          <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Step 1: Smart Contract Setup</h2>
-          <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
-            First, import the VRF interface and implement the required callback function in your contract:
-          </p>
-          <CodeBlock
-            title="MyGame.sol"
-            language="solidity"
-            code={`// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+      {/* Quick Start */}
+      <section className="mb-16">
+        <motion.div 
+          className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h3 className="text-lg font-semibold mb-2">VRF Coordinator Address</h3>
+          <code className="text-purple-400 font-mono text-lg">0x9d57aB4517ba97349551C876a01a7580B1338909</code>
+        </motion.div>
+
+        <h2>Quick Start</h2>
+
+        <h3>1. Install Dependencies</h3>
+        <CodeBlock
+          language="bash"
+          code={`# Install RISE Chain SDK (when available)
+npm install @risechain/sdk
+
+# Or use standard Web3 libraries
+npm install ethers`}
+        />
+
+        <h3>2. Implement VRF Consumer Interface</h3>
+        <p className="mb-4">Your contract must implement the IVRFConsumer interface to receive random numbers:</p>
+        
+        <CodeBlock
+          language="solidity"
+          code={`// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
 import {IVRFConsumer} from "./VRFCoordinator.sol";
 
+interface IVRFCoordinator {
+    function requestRandomNumbers(uint32 numNumbers, uint256 clientSeed) 
+        external returns (uint256 requestId);
+}
+
 contract MyGame is IVRFConsumer {
-    address public vrfCoordinator;
-    mapping(uint256 => address) public requestIdToPlayer;
-    mapping(address => uint256) public playerDiceRoll;
+    IVRFCoordinator public immutable coordinator;
+    mapping(uint256 => address) private requestOwner;
     
-    event DiceRolled(address player, uint256 result);
-    
-    constructor(address _vrfCoordinator) {
-        vrfCoordinator = _vrfCoordinator;
+    // VRF Coordinator address on RISE Chain
+    constructor() { 
+        coordinator = IVRFCoordinator(0x9d57aB4517ba97349551C876a01a7580B1338909); 
     }
-    
-    // Required callback function - called by VRF Coordinator
-    function vrfFulfill(uint256 requestId, uint256[] calldata randomNumbers) external {
-        require(msg.sender == vrfCoordinator, "Only VRF Coordinator");
-        
-        address player = requestIdToPlayer[requestId];
-        require(player != address(0), "Invalid request");
-        
-        // Convert random number to dice roll (1-6)
-        uint256 diceRoll = (randomNumbers[0] % 6) + 1;
-        playerDiceRoll[player] = diceRoll;
-        
-        emit DiceRolled(player, diceRoll);
-        
-        // Clean up
-        delete requestIdToPlayer[requestId];
+
+    // Request random numbers
+    function rollDice() external returns (uint256 requestId) {
+        // Request 1 random number with blockhash as seed
+        requestId = coordinator.requestRandomNumbers(1, uint256(blockhash(block.number-1)));
+        requestOwner[requestId] = msg.sender;
     }
-    
-    function rollDice(uint256 clientSeed) external {
-        require(playerDiceRoll[msg.sender] == 0, "Previous roll not claimed");
+
+    // Receive random numbers (callback from VRF Coordinator)
+    function rawFulfillRandomNumbers(
+        uint256 requestId,
+        uint256[] calldata randomNumbers
+    ) external override {
+        require(msg.sender == address(coordinator), "Only VRF Coordinator");
+        require(randomNumbers.length > 0, "No random numbers");
         
-        // Request 1 random number from VRF Coordinator
-        uint256 requestId = IVRFCoordinator(vrfCoordinator)
-            .requestRandomNumbers(1, clientSeed);
+        address player = requestOwner[requestId];
+        uint256 diceRoll = (randomNumbers[0] % 6) + 1; // 1-6
         
-        requestIdToPlayer[requestId] = msg.sender;
-    }
-    
-    function claimRoll() external {
-        uint256 roll = playerDiceRoll[msg.sender];
-        require(roll > 0, "No roll to claim");
+        // Process your random number
+        // emit DiceRolled(player, diceRoll);
         
-        // Process the dice roll result
-        if (roll == 6) {
-            // Winner logic
-            // payable(msg.sender).transfer(prize);
-        }
-        
-        delete playerDiceRoll[msg.sender];
+        delete requestOwner[requestId];
     }
 }`}
-          />
-        </div>
+        />
 
-        <div>
-          <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Step 2: Backend Service Setup</h2>
-          <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
-            Set up the Shreds-enabled backend service to process VRF requests in real-time:
-          </p>
-          <CodeBlock
-            title="Backend Setup"
-            language="bash"
-            code={`# Clone the VRF backend repository
-git clone https://github.com/rise-labs/vrf-backend
-cd vrf-backend
-
-# Install dependencies
-cargo build --release
-
-# Set environment variables
-export RISE_RPC_URL="https://rpc.testnet.riselabs.xyz"
-export SHREDS_WS_URL="wss://shreds.testnet.riselabs.xyz"
-export VRF_PRIVATE_KEY="your-private-key"
-export VRF_COORDINATOR_ADDRESS="0x..."
-
-# Run the Shreds-enabled backend
-make run-shred-staging
-
-# Backend will automatically:
-# 1. Connect to Shreds WebSocket
-# 2. Listen for RequestRaised events
-# 3. Generate cryptographically secure random numbers
-# 4. Create ECDSA proofs
-# 5. Submit fulfillment transactions`}
-          />
-        </div>
-
-        <div>
-          <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Step 3: Frontend Integration</h2>
-          <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
-            Connect your frontend to listen for VRF responses using the Shreds API:
-          </p>
-          <CodeBlock
-            title="Frontend Integration"
-            language="javascript"
-            code={`import { ethers } from 'ethers';
-
-class VRFGameClient {
-    constructor(contractAddress, provider) {
-        this.contract = new ethers.Contract(contractAddress, ABI, provider);
-        this.ws = null;
-        this.pendingRequests = new Map();
-    }
-    
-    async connectToShreds() {
-        this.ws = new WebSocket('wss://shreds.testnet.riselabs.xyz');
-        
-        this.ws.onopen = () => {
-            console.log('Connected to Shreds API');
-            
-            // Subscribe to VRF events
-            this.ws.send(JSON.stringify({
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "rise_subscribe",
-                "params": [
-                    "logs",
-                    {
-                        "address": this.contract.address,
-                        "topics": [
-                            ethers.utils.id("DiceRolled(address,uint256)")
-                        ]
-                    }
-                ]
-            }));
-        };
-        
-        this.ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.params && data.params.result) {
-                this.handleVRFResult(data.params.result);
-            }
-        };
-    }
-    
-    async rollDice(clientSeed = Date.now()) {
-        const tx = await this.contract.rollDice(clientSeed);
-        const receipt = await tx.wait();
-        
-        console.log('Dice roll requested, waiting for result...');
-        return receipt.transactionHash;
-    }
-    
-    handleVRFResult(logData) {
-        // Decode the DiceRolled event
-        const decoded = ethers.utils.defaultAbiCoder.decode(
-            ['address', 'uint256'],
-            logData.data
-        );
-        
-        const [player, diceRoll] = decoded;
-        console.log(\`Player \${player} rolled: \${diceRoll}\`);
-        
-        // Update UI with instant result
-        this.updateUI(player, diceRoll);
-    }
-    
-    updateUI(player, result) {
-        // Update your game UI instantly
-        document.getElementById('dice-result').textContent = result;
-        document.getElementById('roll-button').disabled = false;
-    }
-}
-
-// Usage
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
-const gameClient = new VRFGameClient(CONTRACT_ADDRESS, signer);
-
-await gameClient.connectToShreds();`}
-          />
-        </div>
-
-        <div>
-          <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Step 4: Testing & Deployment</h2>
-          <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
-            Test your integration and deploy to RISE testnet:
-          </p>
-          <ul className="space-y-3 mb-6">
-            <li className="flex items-start gap-3">
-              <span className="text-purple-400 mt-1">1.</span>
-              <span className="text-zinc-300">Deploy your contract to RISE testnet</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-400 mt-1">2.</span>
-              <span className="text-zinc-300">Start the VRF backend service</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-400 mt-1">3.</span>
-              <span className="text-zinc-300">Test randomness requests from your frontend</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-400 mt-1">4.</span>
-              <span className="text-zinc-300">Verify instant responses via Shreds API</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-400 mt-1">5.</span>
-              <span className="text-zinc-300">Monitor performance and gas optimization</span>
-            </li>
+        <h3>3. Request Parameters</h3>
+        <div className="bg-surface-800 border border-surface-600 rounded-xl p-6 mb-6">
+          <code className="text-lg">requestRandomNumbers(uint32 numNumbers, uint256 clientSeed)</code>
+          <ul className="mt-4 space-y-2 text-gray-300">
+            <li><strong>numNumbers:</strong> Number of random values to generate (1-255)</li>
+            <li><strong>clientSeed:</strong> Your seed value for additional entropy (use blockhash or similar)</li>
+            <li><strong>Returns:</strong> requestId for tracking your request</li>
           </ul>
-          
-          <CodeBlock
-            title="Deployment Script"
-            language="bash"
-            code={`# Deploy contract
-npx hardhat deploy --network rise-testnet
-
-# Verify contract
-npx hardhat verify --network rise-testnet DEPLOYED_ADDRESS
-
-# Start monitoring
-make monitor-vrf-requests
-
-# Test integration
-npm run test:vrf-integration`}
-          />
         </div>
 
-        <div>
-          <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Performance Monitoring</h2>
-          <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
-            Monitor your VRF integration performance to ensure optimal user experience:
-          </p>
-          <CodeBlock
-            title="Monitoring Dashboard"
-            language="javascript"
-            code={`// Track VRF performance metrics
-class VRFMonitor {
-    constructor() {
-        this.requestTimes = new Map();
-        this.fulfillmentTimes = [];
-    }
+        <h3>4. Frontend Integration</h3>
+        <CodeBlock
+          language="javascript"
+          code={`// Connect to RISE Chain
+const provider = new ethers.providers.JsonRpcProvider('https://rpc.risechain.net');
+const contract = new ethers.Contract(contractAddress, abi, signer);
+
+// Request random numbers
+async function requestRandom() {
+    const tx = await contract.rollDice();
+    const receipt = await tx.wait();
     
-    trackRequest(requestId) {
-        this.requestTimes.set(requestId, Date.now());
-    }
+    // Get request ID from events
+    const event = receipt.events.find(e => e.event === 'DiceRollRequested');
+    const requestId = event.args.requestId;
     
-    trackFulfillment(requestId) {
-        const requestTime = this.requestTimes.get(requestId);
-        if (requestTime) {
-            const latency = Date.now() - requestTime;
-            this.fulfillmentTimes.push(latency);
-            
-            console.log(\`VRF Request fulfilled in \${latency}ms\`);
-            
-            // Alert if latency exceeds threshold
-            if (latency > 200) {
-                console.warn('VRF latency exceeding 200ms threshold');
-            }
-        }
-    }
-    
-    getAverageLatency() {
-        if (this.fulfillmentTimes.length === 0) return 0;
-        
-        const sum = this.fulfillmentTimes.reduce((a, b) => a + b, 0);
-        return sum / this.fulfillmentTimes.length;
-    }
+    console.log(\`Request ID: \${requestId}\`);
+    return requestId;
 }
 
-const monitor = new VRFMonitor();
-// Use monitor.trackRequest() and monitor.trackFulfillment() in your app`}
-          />
+// Listen for results
+contract.on('DiceRolled', (player, result) => {
+    console.log(\`Player \${player} rolled: \${result}\`);
+});`}
+        />
+      </section>
+
+      {/* How It Works */}
+      <section className="mb-16">
+        <h2>How It Works</h2>
+        
+        <div className="bg-surface-800 border border-surface-600 rounded-xl p-6 mb-8">
+          <h3 className="text-xl font-semibold mb-4">VRF Request Flow</h3>
+          <ol className="space-y-3">
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-semibold">1</span>
+              <div>
+                <strong>Request:</strong> Your contract calls requestRandomNumbers() on the VRF Coordinator
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-semibold">2</span>
+              <div>
+                <strong>Event Emission:</strong> VRF Coordinator emits a RequestRaised event with your request details
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-semibold">3</span>
+              <div>
+                <strong>Backend Processing:</strong> RISE VRF backend detects the event and generates cryptographically secure random numbers
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-semibold">4</span>
+              <div>
+                <strong>Proof Generation:</strong> Backend creates an ECDSA signature over (requestId, clientSeed, randomNumbers)
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-semibold">5</span>
+              <div>
+                <strong>Fulfillment:</strong> Backend submits the random numbers + cryptographic proof to the VRF Coordinator
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-semibold">6</span>
+              <div>
+                <strong>Verification:</strong> VRF Coordinator verifies the ECDSA signature on-chain to ensure data integrity
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-semibold">7</span>
+              <div>
+                <strong>Callback:</strong> Your contract receives the verified random numbers via rawFulfillRandomNumbers()
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      {/* Advanced: Shreds API */}
+      <section className="mb-16">
+        <h2>Advanced: Ultra-Fast Results with Shreds API</h2>
+        <p className="mb-6">
+          For applications requiring maximum speed, use RISE Chain's Shreds API to receive results before block confirmation:
+        </p>
+        
+        <CodeBlock
+          language="javascript"
+          code={`// Using Shreds API for instant results
+const { WebSocketClient } = require('@risechain/shred-api');
+
+const client = new WebSocketClient('wss://shreds.risechain.com');
+
+// Subscribe to your contract events
+client.subscribeToEvents({
+    contractAddress: 'YOUR_CONTRACT_ADDRESS',
+    eventName: 'DiceRolled',
+    fromBlock: 'latest'
+});
+
+// Receive results in milliseconds
+client.on('event', (event) => {
+    const { player, result } = event.args;
+    console.log(\`Instant result: Player \${player} rolled \${result}\`);
+    // Update UI immediately
+});`}
+        />
+      </section>
+
+      {/* API Reference */}
+      <section className="mb-16">
+        <h2>API Reference</h2>
+
+        <h3>VRF Coordinator Interface</h3>
+        <CodeBlock
+          language="solidity"
+          code={`interface IVRFCoordinator {
+    function requestRandomNumbers(uint32 numNumbers, uint256 clientSeed) 
+        external returns (uint256 requestId);
+    
+    function getClientSeed(uint256 requestId) 
+        external view returns (uint256);
+    
+    function fulfilled(uint256 requestId) 
+        external view returns (bool);
+}`}
+        />
+
+        <h3>VRF Consumer Interface</h3>
+        <CodeBlock
+          language="solidity"
+          code={`interface IVRFConsumer {
+    function rawFulfillRandomNumbers(
+        uint256 requestId,
+        uint256[] calldata randomNumbers
+    ) external;
+}`}
+        />
+
+        <h3>Events</h3>
+        <CodeBlock
+          language="solidity"
+          code={`// Emitted when randomness is requested
+event RequestRaised(
+    uint256 indexed requestId,
+    address indexed requester,
+    uint32 numNumbers,
+    uint256 clientSeed
+);
+
+// Emitted when request is fulfilled
+event RequestFulfilled(uint256 indexed requestId);`}
+        />
+      </section>
+
+      {/* Best Practices */}
+      <section className="mb-16">
+        <h2>Best Practices</h2>
+
+        <h3>Security Guidelines</h3>
+        <div className="space-y-4">
+          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
+            <h4 className="font-semibold mb-2">✅ Always Validate Caller</h4>
+            <CodeBlock
+              language="solidity"
+              code={`require(msg.sender == address(coordinator), "Only VRF Coordinator");`}
+            />
+          </div>
+
+          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
+            <h4 className="font-semibold mb-2">✅ Check Request Ownership</h4>
+            <CodeBlock
+              language="solidity"
+              code={`require(requestOwner[requestId] == expectedOwner, "Invalid request owner");`}
+            />
+          </div>
+
+          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
+            <h4 className="font-semibold mb-2">✅ Validate Random Numbers</h4>
+            <CodeBlock
+              language="solidity"
+              code={`require(randomNumbers.length > 0, "No random numbers received");`}
+            />
+          </div>
+
+          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
+            <h4 className="font-semibold mb-2">✅ Clean Up Request State</h4>
+            <CodeBlock
+              language="solidity"
+              code={`delete requestOwner[requestId]; // Prevent replay attacks`}
+            />
+          </div>
+        </div>
+
+        <h3 className="mt-8">Gas Optimization</h3>
+        <ul className="space-y-2 text-gray-300">
+          <li>• Use uint256 for request tracking (most gas efficient)</li>
+          <li>• Delete mappings after fulfillment to get gas refunds</li>
+          <li>• Batch multiple random values in single request when possible</li>
+        </ul>
+
+        <h3 className="mt-8">Error Handling</h3>
+        <CodeBlock
+          language="solidity"
+          code={`function rawFulfillRandomNumbers(uint256 requestId, uint256[] calldata randomNumbers) external override {
+    // Validate caller
+    if (msg.sender != address(coordinator)) {
+        emit InvalidCaller(msg.sender);
+        return;
+    }
+    
+    // Validate request
+    if (requestOwner[requestId] == address(0)) {
+        emit UnknownRequest(requestId);
+        return;
+    }
+    
+    // Process random numbers...
+}`}
+        />
+      </section>
+
+      {/* Troubleshooting */}
+      <section className="mb-16">
+        <h2>Troubleshooting</h2>
+        
+        <div className="space-y-6">
+          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
+            <h3 className="text-lg font-semibold mb-3">Request Not Fulfilled</h3>
+            <ul className="space-y-2 text-gray-300">
+              <li>• Check that your contract implements IVRFConsumer correctly</li>
+              <li>• Ensure rawFulfillRandomNumbers is public/external</li>
+              <li>• Verify VRF Coordinator address is correct</li>
+            </ul>
+          </div>
+
+          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
+            <h3 className="text-lg font-semibold mb-3">Gas Estimation Errors</h3>
+            <ul className="space-y-2 text-gray-300">
+              <li>• Make sure your callback function doesn't consume too much gas</li>
+              <li>• Avoid complex computations in the callback</li>
+              <li>• Consider using events to log results instead of storage</li>
+            </ul>
+          </div>
+
+          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
+            <h3 className="text-lg font-semibold mb-3">Invalid Proof Errors</h3>
+            <ul className="space-y-2 text-gray-300">
+              <li>• This indicates a problem with the VRF backend - contact support</li>
+              <li>• Do not modify the random numbers before verification</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Support */}
+      <section className="mb-16">
+        <h2>Support</h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          <a 
+            href="https://discord.gg/rise" 
+            target="_blank"
+            className="bg-surface-800 border border-surface-600 rounded-xl p-6 hover:border-purple-500/50 transition-colors block"
+          >
+            <h3 className="font-semibold mb-2">Discord</h3>
+            <p className="text-gray-400">Join our community for support</p>
+          </a>
+          
+          <a 
+            href="https://github.com/rise-l2/vrf" 
+            target="_blank"
+            className="bg-surface-800 border border-surface-600 rounded-xl p-6 hover:border-purple-500/50 transition-colors block"
+          >
+            <h3 className="font-semibold mb-2">GitHub</h3>
+            <p className="text-gray-400">View the VRF repository</p>
+          </a>
+          
+          <a 
+            href="mailto:builders@risechain.com" 
+            className="bg-surface-800 border border-surface-600 rounded-xl p-6 hover:border-purple-500/50 transition-colors block"
+          >
+            <h3 className="font-semibold mb-2">Email</h3>
+            <p className="text-gray-400">Contact our team directly</p>
+          </a>
         </div>
       </section>
     </DocPage>
