@@ -1,7 +1,6 @@
 'use client';
 
 import CodeExamplesTemplate from '@/components/templates/CodeExamplesTemplate';
-import { demoVRFRequest } from '@/lib/api';
 
 const examples = [
   {
@@ -109,21 +108,18 @@ pub fn use_random_value(ctx: Context<UseRandomness>, proof: Vec<u8>) -> Result<(
   }
 ];
 
-const demoCode = `// Click "Run Demo" to request a random value
-const seed = Date.now().toString();
-const result = await demoVRFRequest(seed);
-
-console.log('VRF Request:', result);`;
-
 export default function FastVRFCodeExamplesPage() {
+  const formattedExamples = examples.map(example => ({
+    ...example,
+    description: 'Implementation example'
+  }));
+
   return (
     <CodeExamplesTemplate
       title="Fast VRF Code Examples"
-      subtitle="Learn how to integrate Fast VRF into your application"
-      examples={examples}
-      demoCode={demoCode}
-      demoFunction={demoVRFRequest}
-      demoDescription="Request a verifiable random value"
+      description="Learn how to integrate Fast VRF into your application"
+      currentSection="fast-vrf"
+      examples={formattedExamples}
     />
   );
 }

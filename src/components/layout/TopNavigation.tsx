@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { topNavigation } from '@/data/navigation';
 import { Menu, X } from 'lucide-react';
@@ -16,14 +17,19 @@ export default function TopNavigation() {
   };
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-lg border-b border-zinc-800">
+    <header className="fixed top-0 w-full z-50 bg-surface-950/90 backdrop-blur-lg border-b border-surface-600">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             {/* Logo */}
-            <Link href="/" className="flex-shrink-0 flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg" />
-              <span className="text-xl font-bold">RISE</span>
+            <Link href="/" className="flex-shrink-0 flex items-center">
+              <Image 
+                src="/RISE_Light.png" 
+                alt="RISE Logo" 
+                width={32} 
+                height={32}
+                className="object-contain"
+              />
             </Link>
             
             {/* Desktop navigation */}
@@ -34,8 +40,8 @@ export default function TopNavigation() {
                   href={item.href}
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors ${
                     isActive(item.href)
-                      ? 'border-blue-400 text-blue-400'
-                      : 'border-transparent text-zinc-400 hover:text-zinc-100 hover:border-zinc-700'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-surface-500 hover:text-slate-200 hover:border-surface-600'
                   }`}
                 >
                   {item.title}
@@ -48,7 +54,7 @@ export default function TopNavigation() {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="inline-flex items-center justify-center p-2 rounded-md text-surface-500 hover:text-slate-200 hover:bg-surface-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
@@ -66,7 +72,7 @@ export default function TopNavigation() {
               href="https://github.com/rise-l2"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center text-zinc-400 hover:text-zinc-100 transition-colors"
+              className="flex items-center text-surface-500 hover:text-slate-200 transition-colors"
             >
               <svg 
                 className="w-5 h-5"
@@ -82,7 +88,7 @@ export default function TopNavigation() {
       
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-zinc-900 border-t border-zinc-800">
+        <div className="md:hidden bg-surface-900 border-t border-surface-600">
           <div className="pt-2 pb-3 space-y-1">
             {topNavigation.map((item) => (
               <Link
@@ -90,8 +96,8 @@ export default function TopNavigation() {
                 href={item.href}
                 className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-colors ${
                   isActive(item.href)
-                    ? 'bg-blue-500/10 border-blue-400 text-blue-400'
-                    : 'border-transparent text-zinc-400 hover:bg-zinc-800 hover:border-zinc-700 hover:text-zinc-100'
+                    ? 'bg-primary/10 border-primary text-primary'
+                    : 'border-transparent text-surface-500 hover:bg-surface-800 hover:border-surface-600 hover:text-slate-200'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -102,7 +108,7 @@ export default function TopNavigation() {
               href="https://github.com/rise-l2"
               target="_blank"
               rel="noopener noreferrer"
-              className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-zinc-400 hover:bg-zinc-800 hover:border-zinc-700 hover:text-zinc-100"
+              className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-surface-500 hover:bg-surface-800 hover:border-surface-600 hover:text-slate-200"
               onClick={() => setIsMenuOpen(false)}
             >
               GitHub

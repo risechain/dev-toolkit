@@ -1,9 +1,8 @@
 'use client';
 
 import { ReactNode } from 'react';
-import Link from 'next/link';
 import PageLayout from '../layout/PageLayout';
-import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface SectionLink {
   title: string;
@@ -18,144 +17,90 @@ interface SectionLandingPageProps {
   description: string;
   currentSection: string;
   heroContent?: ReactNode;
-  links: SectionLink[];
   customContent?: ReactNode;
 }
+
+// Animation variants
+const containerVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  show: { y: 0, opacity: 1 }
+};
+
+const heroVariants = {
+  hidden: { y: 30, opacity: 0 },
+  show: { 
+    y: 0, 
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut"
+    }
+  }
+};
 
 export default function SectionLandingPage({ 
   title, 
   description, 
   currentSection, 
   heroContent,
-  links,
   customContent 
 }: SectionLandingPageProps) {
   return (
     <PageLayout currentSection={currentSection}>
-      <div className="max-w-6xl mx-auto">
-        {/* Hero Section */}
-        <section style={{ 
-          position: 'relative',
-          paddingTop: '48px',
-          paddingBottom: '48px'
-        }}>
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'radial-gradient(ellipse at top, rgba(59, 130, 246, 0.1), transparent 50%)',
-            pointerEvents: 'none'
-          }} />
-          
-          <div style={{ position: 'relative', textAlign: 'center' }}>
-            <h1 style={{ 
-              fontSize: '3.5rem',
-              fontWeight: 'bold',
-              marginBottom: '24px',
-              background: 'linear-gradient(to right, #3b82f6, #06b6d4)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              {title}
-            </h1>
-            <p style={{ 
-              fontSize: '1.25rem',
-              color: '#a1a1aa',
-              marginBottom: '48px',
-              maxWidth: '800px',
-              margin: '0 auto 48px',
-              lineHeight: '1.75'
-            }}>
-              {description}
-            </p>
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Hero Section - Full Width */}
+        <motion.section 
+          className="py-16 lg:py-24"
+          initial="hidden"
+          animate="show"
+          variants={containerVariants}
+        >
+          {/* Main Content */}
+          <motion.div className="space-y-8 max-w-4xl mx-auto text-center" variants={heroVariants}>
+            <div className="relative">
+              {/* Background glow effect */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-neon/10 to-transparent blur-xl opacity-70" />
+              
+              <div className="relative">
+                <h1 className="text-6xl lg:text-7xl font-display font-black bg-gradient-to-br from-primary to-neon bg-clip-text text-transparent leading-tight">
+                  {title}
+                </h1>
+                <p className="text-xl lg:text-2xl text-gray-300 mt-6 leading-relaxed">
+                  {description}
+                </p>
+              </div>
+            </div>
             
             {heroContent && (
-              <div style={{ marginBottom: '48px' }}>
-                {heroContent}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Navigation Cards */}
-        <section style={{ paddingBottom: '48px' }}>
-          <div style={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '24px'
-          }}>
-            {links.map((link, index) => (
-              <Link 
-                key={link.href} 
-                href={link.href} 
-                style={{ textDecoration: 'none', color: 'inherit' }}
+              <motion.div 
+                className="relative z-10"
+                variants={itemVariants}
               >
-                <div style={{ 
-                  position: 'relative',
-                  padding: '32px',
-                  height: '100%',
-                  backgroundColor: 'rgba(24, 24, 27, 0.5)',
-                  backdropFilter: 'blur(8px)',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  transition: 'all 0.3s ease',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.borderColor = link.color;
-                  e.currentTarget.style.boxShadow = `0 20px 40px rgba(0, 0, 0, 0.2)`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}>
-                  <div style={{ 
-                    marginBottom: '20px',
-                    color: link.color
-                  }}>
-                    {link.icon}
-                  </div>
-                  <h3 style={{ 
-                    fontSize: '1.5rem', 
-                    fontWeight: 'bold', 
-                    marginBottom: '12px', 
-                    color: '#ffffff' 
-                  }}>
-                    {link.title}
-                  </h3>
-                  <p style={{ 
-                    color: '#a1a1aa', 
-                    marginBottom: '20px', 
-                    lineHeight: '1.6' 
-                  }}>
-                    {link.description}
-                  </p>
-                  <div style={{ 
-                    color: link.color,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    fontSize: '14px',
-                    fontWeight: '500'
-                  }}>
-                    Explore <ArrowRight style={{ width: '16px', height: '16px' }} />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+                {heroContent}
+              </motion.div>
+            )}
+          </motion.div>
+        </motion.section>
 
         {/* Custom Content Section */}
         {customContent && (
-          <section style={{ 
-            paddingTop: '48px', 
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)' 
-          }}>
+          <motion.section 
+            className="py-16 border-t border-white/10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+          >
             {customContent}
-          </section>
+          </motion.section>
         )}
       </div>
     </PageLayout>

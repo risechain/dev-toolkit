@@ -1,5 +1,7 @@
 'use client';
 
+import { motion } from 'framer-motion';
+
 interface StatCard {
   value: string;
   label: string;
@@ -96,39 +98,111 @@ export function TimeOracleHero() {
   return <HeroContent config={config} />;
 }
 
+// Animation variants
+const containerVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { y: 20, opacity: 0, scale: 0.95 },
+  show: { 
+    y: 0, 
+    opacity: 1, 
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
+};
+
 function HeroContent({ config }: { config: HeroContentConfig }) {
   return (
-    <div className="text-center space-y-8">
-      <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+    <motion.div 
+      className="space-y-12"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
+      {/* Stats Grid */}
+      <motion.div 
+        className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto"
+        variants={containerVariants}
+      >
         {config.stats.map((stat, index) => (
-          <div key={index} className="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
-            <div className={`text-3xl font-bold ${stat.color} mb-2`}>{stat.value}</div>
-            <div className="text-gray-300">{stat.label}</div>
-          </div>
+          <motion.div 
+            key={index} 
+            className="bg-surface-800 border border-surface-600 rounded-xl p-6 text-center group hover:scale-105 transition-all duration-300 hover:border-surface-500"
+            variants={cardVariants}
+            whileHover={{ 
+              boxShadow: "0 0 20px rgba(255, 255, 255, 0.1)",
+              scale: 1.05 
+            }}
+          >
+            <div className={`text-4xl font-display font-black mb-3 glow-text`} style={{ color: stat.color }}>
+              {stat.value}
+            </div>
+            <p className="text-sm tracking-wide uppercase text-gray-400 font-medium">
+              {stat.label}
+            </p>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
       
-      <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6 max-w-4xl mx-auto">
-        <h3 className={`text-xl font-semibold ${config.useCases.color} mb-4`}>{config.useCases.title}</h3>
-        <div className="grid md:grid-cols-2 gap-4 text-left">
-          <div className="space-y-2">
+      {/* Use Cases */}
+      <motion.div 
+        className="bg-surface-800 border border-surface-600 rounded-xl p-8 max-w-4xl mx-auto hover:border-surface-500 transition-colors duration-300"
+        variants={cardVariants}
+      >
+        <h3 className={`text-2xl font-display font-bold mb-6 text-center glow-text`} style={{ color: config.useCases.color }}>
+          {config.useCases.title}
+        </h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-3">
             {config.useCases.items.slice(0, 3).map((item, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <div className={`w-2 h-2 ${item.color} rounded-full`}></div>
-                <span>{item.text}</span>
-              </div>
+              <motion.div 
+                key={index} 
+                className="flex items-center space-x-3 group"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 + index * 0.1 }}
+              >
+                <div 
+                  className="w-3 h-3 rounded-full flex-shrink-0 group-hover:scale-125 transition-transform"
+                  style={{ backgroundColor: item.color.replace('bg-', '#') }}
+                />
+                <span className="text-gray-300 group-hover:text-white transition-colors">
+                  {item.text}
+                </span>
+              </motion.div>
             ))}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {config.useCases.items.slice(3).map((item, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <div className={`w-2 h-2 ${item.color} rounded-full`}></div>
-                <span>{item.text}</span>
-              </div>
+              <motion.div 
+                key={index} 
+                className="flex items-center space-x-3 group"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 + index * 0.1 }}
+              >
+                <div 
+                  className="w-3 h-3 rounded-full flex-shrink-0 group-hover:scale-125 transition-transform"
+                  style={{ backgroundColor: item.color.replace('bg-', '#') }}
+                />
+                <span className="text-gray-300 group-hover:text-white transition-colors">
+                  {item.text}
+                </span>
+              </motion.div>
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
