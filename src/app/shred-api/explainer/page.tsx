@@ -140,7 +140,7 @@ export default function ShredApiExplainer() {
             language="javascript"
             code={`// Create WebSocket connection with automatic reconnection
 class ShredConnection {
-  constructor(url = 'wss://shreds.testnet.riselabs.xyz') {
+  constructor(url = 'wss://testnet.riselabs.xyz') {
     this.url = url;
     this.ws = null;
     this.reconnectAttempts = 0;

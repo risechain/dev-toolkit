@@ -11,13 +11,16 @@ const codeExamples = [
     code: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IVRFConsumer} from "./VRFCoordinator.sol";
-
+// VRF Interfaces
 interface IVRFCoordinator {
-    function requestRandomNumbers(
-        uint32 numValues,
-        uint256 callbackGasLimit
-    ) external returns (uint256 requestId);
+    function requestRandomNumbers(uint32 numNumbers, uint256 seed) external returns (uint256);
+}
+
+interface IVRFConsumer {
+    function rawFulfillRandomNumbers(
+        uint256 requestId,
+        uint256[] memory randomNumbers
+    ) external;
 }
 
 contract MyRandomContract is IVRFConsumer {
@@ -34,15 +37,16 @@ contract MyRandomContract is IVRFConsumer {
     }
     
     function requestRandom() external returns (uint256 requestId) {
-        // Request 3 random numbers with callback gas limit
-        requestId = coordinator.requestRandomNumbers(3, 300000);
+        // Request 3 random numbers with a seed
+        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender)));
+        requestId = coordinator.requestRandomNumbers(3, seed);
         pendingRequests[requestId] = true;
         emit RandomNumbersRequested(requestId);
     }
     
     function rawFulfillRandomNumbers(
         uint256 requestId,
-        uint256[] calldata randomNumbers
+        uint256[] memory randomNumbers
     ) external override {
         require(msg.sender == address(coordinator), "Only VRF coordinator");
         require(pendingRequests[requestId], "Request not found");
@@ -62,10 +66,16 @@ contract MyRandomContract is IVRFConsumer {
     code: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IVRFConsumer} from "./VRFCoordinator.sol";
-
+// VRF Interfaces
 interface IVRFCoordinator {
-    function requestRandomNumbers(uint32, uint256) external returns (uint256);
+    function requestRandomNumbers(uint32 numNumbers, uint256 seed) external returns (uint256);
+}
+
+interface IVRFConsumer {
+    function rawFulfillRandomNumbers(
+        uint256 requestId,
+        uint256[] memory randomNumbers
+    ) external;
 }
 
 contract DiceGame is IVRFConsumer {
@@ -80,14 +90,16 @@ contract DiceGame is IVRFConsumer {
     }
 
     function rollDice() external returns (uint256 requestId) {
-        requestId = coordinator.requestRandomNumbers(1, uint256(blockhash(block.number-1)));
+        // Generate seed for randomness request
+        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, block.number)));
+        requestId = coordinator.requestRandomNumbers(1, seed);
         requestOwner[requestId] = msg.sender;
         emit DiceRollRequested(requestId, msg.sender);
     }
 
     function rawFulfillRandomNumbers(
         uint256 requestId,
-        uint256[] calldata randomNumbers
+        uint256[] memory randomNumbers
     ) external override {
         require(msg.sender == address(coordinator), "Only coordinator");
         require(randomNumbers.length > 0, "No random numbers");
@@ -110,8 +122,19 @@ contract DiceGame is IVRFConsumer {
     code: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IVRFConsumer} from "./VRFCoordinator.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+
+// VRF Interfaces
+interface IVRFCoordinator {
+    function requestRandomNumbers(uint32 numNumbers, uint256 seed) external returns (uint256);
+}
+
+interface IVRFConsumer {
+    function rawFulfillRandomNumbers(
+        uint256 requestId,
+        uint256[] memory randomNumbers
+    ) external;
+}
 
 contract RandomNFT is ERC721, IVRFConsumer {
     IVRFCoordinator public immutable coordinator;
@@ -131,13 +154,15 @@ contract RandomNFT is ERC721, IVRFConsumer {
     }
     
     function mintRandom() external returns (uint256 requestId) {
-        requestId = coordinator.requestRandomNumbers(3, uint256(blockhash(block.number-1)));
+        // Generate seed for 3 random numbers (for traits)
+        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, nextTokenId)));
+        requestId = coordinator.requestRandomNumbers(3, seed);
         pendingMints[requestId] = msg.sender;
     }
     
     function rawFulfillRandomNumbers(
         uint256 requestId,
-        uint256[] calldata randomNumbers
+        uint256[] memory randomNumbers
     ) external override {
         require(msg.sender == address(coordinator), "Only coordinator");
         require(randomNumbers.length >= 3, "Need 3 random numbers");
@@ -167,7 +192,17 @@ contract RandomNFT is ERC721, IVRFConsumer {
     code: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IVRFConsumer} from "./VRFCoordinator.sol";
+// VRF Interfaces
+interface IVRFCoordinator {
+    function requestRandomNumbers(uint32 numNumbers, uint256 seed) external returns (uint256);
+}
+
+interface IVRFConsumer {
+    function rawFulfillRandomNumbers(
+        uint256 requestId,
+        uint256[] memory randomNumbers
+    ) external;
+}
 
 contract Lottery is IVRFConsumer {
     IVRFCoordinator public immutable coordinator;
@@ -193,12 +228,13 @@ contract Lottery is IVRFConsumer {
         require(!drawInProgress, "Draw in progress");
         
         drawInProgress = true;
-        drawRequestId = coordinator.requestRandomNumbers(1, uint256(blockhash(block.number-1)));
+        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, participants.length)));
+        drawRequestId = coordinator.requestRandomNumbers(1, seed);
     }
     
     function rawFulfillRandomNumbers(
         uint256 requestId,
-        uint256[] calldata randomNumbers
+        uint256[] memory randomNumbers
     ) external override {
         require(msg.sender == address(coordinator), "Only coordinator");
         require(requestId == drawRequestId, "Wrong request");
@@ -225,7 +261,7 @@ contract Lottery is IVRFConsumer {
     language: 'typescript',
     code: `import Web3 from 'web3';
 
-const SHREDS_API_URL = 'wss://api.rise.chain/shreds';
+const SHREDS_API_URL = 'wss://testnet.riselabs.xyz/ws';
 const VRF_COORDINATOR = '0x9d57aB4517ba97349551C876a01a7580B1338909';
 
 class VRFClient {
@@ -259,29 +295,7 @@ class VRFClient {
   
   private handleVRFFulfillment(message: any) {
     const { requestId, randomNumbers, proof } = message.data;
-    
-    // Verify the ECDSA signature
-    const isValid = this.verifyVRFProof(requestId, randomNumbers, proof);
-    
-    if (isValid) {
-      console.log(\`VRF Request \${requestId} fulfilled:\`, randomNumbers);
-      // Process the random numbers
-    }
-  }
-  
-  private verifyVRFProof(
-    requestId: string,
-    randomNumbers: string[],
-    proof: string
-  ): boolean {
-    // Implement ECDSA verification
-    const message = this.web3.utils.soliditySha3(
-      { type: 'uint256', value: requestId },
-      { type: 'uint256[]', value: randomNumbers }
-    );
-    
-    const signer = this.web3.eth.accounts.recover(message!, proof);
-    return signer.toLowerCase() === VRF_COORDINATOR.toLowerCase();
+    console.log(\`VRF Request \${requestId} fulfilled:\`, randomNumbers);
   }
 }`
   }

@@ -23,48 +23,55 @@ export default function ShredApiDocs() {
           <ul className="space-y-2 text-zinc-300">
             <li className="flex items-start gap-2">
               <span className="text-blue-400 mt-1">•</span>
-              <span>A RISE testnet API key (get one at <a href="https://portal.riselabs.xyz" className="text-blue-400 hover:text-blue-300 underline">portal.riselabs.xyz</a>)</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-400 mt-1">•</span>
               <span>WebSocket client library for your language</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-blue-400 mt-1">•</span>
               <span>Basic understanding of JSON-RPC protocol</span>
             </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-400 mt-1">•</span>
+              <span>Access to RISE testnet (no API key required)</span>
+            </li>
           </ul>
         </div>
 
         <div>
-          <h3 className="text-2xl font-semibold mb-4 text-zinc-100">Authentication</h3>
+          <h3 className="text-2xl font-semibold mb-4 text-zinc-100">Connection Setup</h3>
           <p className="text-zinc-300 mb-4">
-            All API requests require authentication. You can provide your API key in two ways:
+            Connect to the RISE WebSocket endpoint to start receiving real-time Shred data. No authentication required.
           </p>
           
           <CodeBlock
             language="javascript"
-            code={`// Method 1: Query parameter
-const ws = new WebSocket('wss://shreds.testnet.riselabs.xyz?apikey=YOUR_API_KEY');
+            code={`// Connect to RISE testnet WebSocket
+const ws = new WebSocket('wss://testnet.riselabs.xyz/ws');
 
-// Method 2: First message after connection
-ws.onopen = () => {
+ws.on('open', () => {
+  console.log('Connected to RISE WebSocket');
+  
+  // Start subscribing to events
   ws.send(JSON.stringify({
     jsonrpc: '2.0',
-    id: 0,
-    method: 'auth',
-    params: {
-      apiKey: 'YOUR_API_KEY'
-    }
+    id: 1,
+    method: 'rise_subscribe',
+    params: [
+      'logs',
+      {
+        // Optional filters
+        address: '0x...', // Contract address to monitor
+        topics: ['0x...'] // Event signatures to filter
+      }
+    ]
   }));
-};`}
-            title="Authentication Methods"
+});`}
+            title="WebSocket Connection"
           />
 
-          <div className="bg-yellow-500/10 rounded-lg p-4 border border-yellow-500/20 mt-4">
-            <p className="text-yellow-200">
-              <strong>Security Note:</strong> Never expose your API key in client-side code. Use environment variables 
-              or proxy through your backend.
+          <div className="bg-blue-500/10 rounded-lg p-4 border border-blue-500/20 mt-4">
+            <p className="text-blue-200">
+              <strong>Note:</strong> The Shred API provides instant access to pre-confirmation data without requiring API keys. 
+              Simply connect and subscribe to start receiving real-time updates.
             </p>
           </div>
         </div>
@@ -83,40 +90,43 @@ ws.onopen = () => {
               <tbody className="divide-y divide-zinc-800">
                 <tr>
                   <td className="px-6 py-4 text-zinc-300">Testnet</td>
-                  <td className="px-6 py-4"><code className="text-blue-400">wss://shreds.testnet.riselabs.xyz</code></td>
+                  <td className="px-6 py-4"><code className="text-blue-400">wss://testnet.riselabs.xyz/ws</code></td>
                   <td className="px-6 py-4 text-green-400">✓ Live</td>
                 </tr>
-                <tr>
-                  <td className="px-6 py-4 text-zinc-300">Mainnet</td>
-                  <td className="px-6 py-4"><code className="text-blue-400">wss://shreds.mainnet.riselabs.xyz</code></td>
-                  <td className="px-6 py-4 text-yellow-400">Coming Soon</td>
-                </tr>
+
               </tbody>
             </table>
           </div>
         </div>
 
         <div>
-          <h3 className="text-2xl font-semibold mb-4 text-zinc-100">Rate Limits</h3>
-          <div className="bg-zinc-900/50 rounded-lg p-6 border border-zinc-800">
-            <ul className="space-y-3">
-              <li className="flex justify-between">
-                <span className="text-zinc-300">Max connections per API key:</span>
-                <span className="text-zinc-100 font-mono">5</span>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-zinc-300">Max subscriptions per connection:</span>
-                <span className="text-zinc-100 font-mono">100</span>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-zinc-300">Max messages per second:</span>
-                <span className="text-zinc-100 font-mono">1000</span>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-zinc-300">Connection timeout (idle):</span>
-                <span className="text-zinc-100 font-mono">5 minutes</span>
-              </li>
-            </ul>
+          <h3 className="text-2xl font-semibold mb-4 text-zinc-100">Supported Subscription Channels</h3>
+          <div className="bg-zinc-900/50 rounded-lg overflow-hidden border border-zinc-800">
+            <table className="w-full">
+              <thead className="bg-zinc-800/50">
+                <tr>
+                  <th className="text-left px-6 py-3 text-zinc-300">Channel</th>
+                  <th className="text-left px-6 py-3 text-zinc-300">Purpose</th>
+                  <th className="text-left px-6 py-3 text-zinc-300">When to use</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-800">
+                <tr>
+                  <td className="px-6 py-4 font-mono text-blue-400">logs</td>
+                  <td className="px-6 py-4 text-zinc-300">Push every matching contract event as soon as it is emitted inside a Shred</td>
+                  <td className="px-6 py-4 text-zinc-300">Monitor specific contracts or topics (e.g. in-game events, NFT mints)</td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 font-mono text-zinc-400">(empty)</td>
+                  <td className="px-6 py-4 text-zinc-300">Push each Shred object with full txs, receipts & state diff</td>
+                  <td className="px-6 py-4 text-zinc-300">Build mem-pool style explorers, risk engines, or latency-critical bots</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-4 text-zinc-300">
+            <p className="mb-2">Both channels send notifications through the common <code className="text-blue-400">"rise_subscription"</code> envelope.</p>
+            <p>For <code className="text-blue-400">logs</code> the <code className="text-blue-400">blockHash</code> field is <strong>null</strong> until the enclosing block is finalised.</p>
           </div>
         </div>
       </section>
@@ -132,9 +142,9 @@ ws.onopen = () => {
 
         <div className="space-y-8">
           <div className="border-l-4 border-blue-500 pl-6">
-            <h3 className="text-2xl font-semibold mb-4 text-zinc-100">shred_subscribe</h3>
+            <h3 className="text-2xl font-semibold mb-4 text-zinc-100">rise_subscribe</h3>
             <p className="text-zinc-300 mb-4">
-              Create a subscription to receive real-time shred notifications based on filters. Returns a subscription ID 
+              Create a subscription to receive real-time shred/log notifications based on filters. Returns a subscription ID 
               that will be included with all notifications.
             </p>
             
@@ -143,58 +153,51 @@ ws.onopen = () => {
               <ul className="space-y-2 text-sm">
                 <li>
                   <code className="text-blue-400">address</code> <span className="text-zinc-500">(optional)</span> - 
-                  <span className="text-zinc-300">Contract address to filter by</span>
-                </li>
-                <li>
-                  <code className="text-blue-400">from</code> <span className="text-zinc-500">(optional)</span> - 
-                  <span className="text-zinc-300">Filter by sender address</span>
-                </li>
-                <li>
-                  <code className="text-blue-400">to</code> <span className="text-zinc-500">(optional)</span> - 
-                  <span className="text-zinc-300">Filter by recipient address</span>
+                  <span className="text-zinc-300">Contract address(es) to match (string or string[])</span>
                 </li>
                 <li>
                   <code className="text-blue-400">topics</code> <span className="text-zinc-500">(optional)</span> - 
-                  <span className="text-zinc-300">Array of event topics to filter</span>
-                </li>
-                <li>
-                  <code className="text-blue-400">includeReceipts</code> <span className="text-zinc-500">(optional)</span> - 
-                  <span className="text-zinc-300">Include transaction receipts (default: false)</span>
+                  <span className="text-zinc-300">Topic filters, up to 4 indexed event topics (same semantics as Ethereum)</span>
                 </li>
               </ul>
             </div>
             
             <CodeBlock
               language="json"
-              code={`// Subscribe to all transactions for a specific address
+              code={`// Subscribe to logs from a specific contract
 {
   "jsonrpc": "2.0",
   "id": 1,
-  "method": "shred_subscribe",
-  "params": {
-    "address": "0x742d35Cc69C7968C73Cf74B0E73d6a51b3e0a5B8",
-    "includeReceipts": true
-  }
+  "method": "rise_subscribe",
+  "params": [
+    "logs",
+    {
+      "address": "0x6257c5f110900a8E02A7A480b097D44F96360d16",
+      "topics": ["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"] // Transfer event
+    }
+  ]
 }
 
-// Subscribe to specific events
+// Subscribe to multiple addresses
 {
   "jsonrpc": "2.0",
   "id": 2,
-  "method": "shred_subscribe",
-  "params": {
-    "topics": [
-      "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef" // Transfer event
-    ]
-  }
+  "method": "rise_subscribe",
+  "params": [
+    "logs",
+    {
+      "address": ["0x...", "0x..."],
+      "topics": []
+    }
+  ]
 }
 
-// Subscribe to all shreds (no filter)
+// Subscribe to all logs (no filter)
 {
   "jsonrpc": "2.0",
   "id": 3,
-  "method": "shred_subscribe",
-  "params": {}
+  "method": "rise_subscribe",
+  "params": ["logs", {}]
 }`}
               title="Subscribe Examples"
             />
@@ -204,17 +207,14 @@ ws.onopen = () => {
               code={`{
   "jsonrpc": "2.0",
   "id": 1,
-  "result": {
-    "subscriptionId": "0x9ce59a13059e417087c02d3236a0b1cc",
-    "status": "active"
-  }
+  "result": "0x9ce59a13059e417087c02d3236a0b1cc"
 }`}
               title="Success Response"
             />
           </div>
 
           <div className="border-l-4 border-blue-500 pl-6">
-            <h3 className="text-2xl font-semibold mb-4 text-zinc-100">shred_unsubscribe</h3>
+            <h3 className="text-2xl font-semibold mb-4 text-zinc-100">rise_unsubscribe</h3>
             <p className="text-zinc-300 mb-4">
               Cancel an active subscription. The subscription will stop sending notifications immediately.
             </p>
@@ -233,11 +233,9 @@ ws.onopen = () => {
               language="json"
               code={`{
   "jsonrpc": "2.0",
-  "id": 4,
-  "method": "shred_unsubscribe",
-  "params": {
-    "subscriptionId": "0x9ce59a13059e417087c02d3236a0b1cc"
-  }
+  "id": 2,
+  "method": "rise_unsubscribe",
+  "params": ["0x9ce59a13059e417087c02d3236a0b1cc"]
 }`}
               title="Unsubscribe Request"
             />
@@ -246,7 +244,7 @@ ws.onopen = () => {
               language="json"
               code={`{
   "jsonrpc": "2.0",
-  "id": 4,
+  "id": 2,
   "result": true
 }`}
               title="Success Response"
@@ -254,85 +252,36 @@ ws.onopen = () => {
           </div>
 
           <div className="border-l-4 border-blue-500 pl-6">
-            <h3 className="text-2xl font-semibold mb-4 text-zinc-100">shred_getStatus</h3>
+            <h3 className="text-2xl font-semibold mb-4 text-zinc-100">Computing Event Signatures</h3>
             <p className="text-zinc-300 mb-4">
-              Get current connection status and subscription information.
+              To filter for specific events, you need to compute the event signature hash. This is the keccak256 hash of the event declaration.
             </p>
             
             <CodeBlock
-              language="json"
-              code={`{
-  "jsonrpc": "2.0",
-  "id": 5,
-  "method": "shred_getStatus",
-  "params": {}
-}`}
-              title="Status Request"
-            />
+              language="typescript"
+              code={`import { ethers } from "ethers";
 
-            <CodeBlock
-              language="json"
-              code={`{
-  "jsonrpc": "2.0",
-  "id": 5,
-  "result": {
-    "connected": true,
-    "subscriptions": 3,
-    "messagesReceived": 15234,
-    "uptime": 3600,
-    "latestBlock": 1234567,
-    "version": "1.0.0"
-  }
-}`}
-              title="Status Response"
-            />
-          </div>
+// Calculate event signatures
+const TRANSFER_SIG = ethers.id("Transfer(address,address,uint256)");
+// Result: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
 
-          <div className="border-l-4 border-blue-500 pl-6">
-            <h3 className="text-2xl font-semibold mb-4 text-zinc-100">shred_getFilters</h3>
-            <p className="text-zinc-300 mb-4">
-              Retrieve the current filters for an active subscription.
-            </p>
-            
-            <h4 className="text-lg font-semibold mb-2 text-zinc-200">Parameters</h4>
-            <div className="bg-zinc-900/50 rounded-lg p-4 mb-4 border border-zinc-800">
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <code className="text-blue-400">subscriptionId</code> <span className="text-red-400">(required)</span> - 
-                  <span className="text-zinc-300">The subscription ID to query</span>
-                </li>
-              </ul>
-            </div>
-            
-            <CodeBlock
-              language="json"
-              code={`{
-  "jsonrpc": "2.0",
-  "id": 6,
-  "method": "shred_getFilters",
-  "params": {
-    "subscriptionId": "0x9ce59a13059e417087c02d3236a0b1cc"
-  }
-}`}
-              title="Get Filters Request"
-            />
+const APPROVAL_SIG = ethers.id("Approval(address,address,uint256)");
+// Result: 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925
 
-            <CodeBlock
-              language="json"
-              code={`{
-  "jsonrpc": "2.0",
-  "id": 6,
-  "result": {
-    "subscriptionId": "0x9ce59a13059e417087c02d3236a0b1cc",
-    "filters": {
-      "address": "0x742d35Cc69C7968C73Cf74B0E73d6a51b3e0a5B8",
-      "includeReceipts": true
-    },
-    "created": "2024-01-15T10:30:00Z",
-    "messagesDelivered": 523
-  }
-}`}
-              title="Filters Response"
+// Use in subscription
+ws.send(JSON.stringify({
+  jsonrpc: "2.0",
+  id: 1,
+  method: "rise_subscribe",
+  params: [
+    "logs",
+    {
+      address: "0x...",
+      topics: [TRANSFER_SIG] // Filter for Transfer events only
+    }
+  ]
+}));`}
+              title="Computing Topic Signatures"
             />
           </div>
         </div>
@@ -348,7 +297,61 @@ ws.onopen = () => {
         </div>
 
         <div>
-          <h3 className="text-2xl font-semibold mb-4 text-zinc-100">Connection Lifecycle</h3>
+          <h3 className="text-2xl font-semibold mb-4 text-zinc-100">Quick Start Example</h3>
+          <CodeBlock
+            language="typescript"
+            code={`import WebSocket from "ws";
+import { ethers } from "ethers";
+
+const WS_URL = "wss://testnet.riselabs.xyz/ws";
+const TOKEN_ADDRESS = "0x6257c5f110900a8E02A7A480b097D44F96360d16";
+const TRANSFER_SIG = ethers.id("Transfer(address,address,uint256)");
+
+const ws = new WebSocket(WS_URL);
+
+ws.on("open", () => {
+  const id = 1;
+  
+  ws.send(JSON.stringify({
+    jsonrpc: "2.0",
+    id,
+    method: "rise_subscribe",
+    params: [
+      "logs",
+      {
+        address: TOKEN_ADDRESS,
+        topics: [TRANSFER_SIG]
+      }
+    ]
+  }));
+});
+
+ws.on("message", raw => {
+  const msg = JSON.parse(raw.toString());
+  
+  // First response contains subscription id
+  if (msg.id && msg.result) {
+    console.log("Subscribed – id =", msg.result);
+    return;
+  }
+  
+  // Subsequent notifications
+  if (msg.method === "rise_subscription") {
+    const log = msg.params.result;
+    console.log("🟢 New Transfer", {
+      from: "0x" + log.topics[1].slice(26),
+      to: "0x" + log.topics[2].slice(26),
+      value: BigInt(log.data).toString(),
+      tx: log.transactionHash
+    });
+  }
+});`}
+            title="Quick Start - Monitoring ERC20 Transfers"
+          />
+        </div>
+
+        <div>
+          <h3 className="text-2xl font-semibold mb-4 text-zinc-100">Production WebSocket Client</h3>
           <CodeBlock
             language="javascript"
             code={`class ShredClient {
@@ -364,7 +367,7 @@ ws.onopen = () => {
 
   connect() {
     return new Promise((resolve, reject) => {
-      this.ws = new WebSocket('wss://shreds.testnet.riselabs.xyz');
+      this.ws = new WebSocket('wss://testnet.riselabs.xyz');
       
       this.ws.onopen = () => {
         console.log('Connected to Shred API');
@@ -508,89 +511,101 @@ client.subscribe({
           
           <div className="space-y-6">
             <div>
-              <h4 className="text-lg font-semibold mb-2 text-zinc-200">Shred Notification</h4>
+              <h4 className="text-lg font-semibold mb-2 text-zinc-200">Initial Response</h4>
               <p className="text-zinc-300 mb-3">
-                Primary notification sent when a transaction matching your filters is detected.
+                After subscribing, you'll receive a confirmation with your subscription ID.
               </p>
               <CodeBlock
                 language="json"
                 code={`{
   "jsonrpc": "2.0",
-  "method": "shred_notification",
+  "id": 1,
+  "result": "0x9ce59a13059e417087c02d3236a0b1cc"
+}`}
+                title="Subscription Confirmation"
+              />
+            </div>
+
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-zinc-200">Log Notification</h4>
+              <p className="text-zinc-300 mb-3">
+                For log subscriptions, you'll receive Ethereum-style Log objects. Note that <code className="text-blue-400">blockHash</code> is <strong>null</strong> until the block is finalized.
+              </p>
+              <CodeBlock
+                language="json"
+                code={`{
+  "jsonrpc": "2.0",
+  "method": "rise_subscription",
   "params": {
-    "subscriptionId": "0x9ce59a13059e417087c02d3236a0b1cc",
-    "shred": {
-      "shredId": "0xf47ac10b58cc4372",
-      "timestamp": 1704067200000,
-      "transaction": {
-        "hash": "0x88df016429689c079f3b2f6ad39fa052532c56795b733da5e5d1b2e4db8f4a25",
-        "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f8c8C5",
-        "to": "0x9876543210fedcba9876543210fedcba98765432",
-        "value": "1000000000000000000",
-        "gas": "21000",
-        "gasPrice": "20000000000",
-        "nonce": 42,
-        "input": "0xa9059cbb000000000000000000000000abc...",
-        "type": "0x2",
-        "chainId": "0x1"
-      },
-      "status": "pending",
-      "pool": "mempool",
-      "priority": "high"
+    "subscription": "0x9ce59a13059e417087c02d3236a0b1cc",
+    "result": {
+      "address": "0x6257c5f110900a8E02A7A480b097D44F96360d16",
+      "topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8"
+      ],
+      "data": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000",
+      "blockNumber": "0x12d687",
+      "blockHash": null,
+      "transactionHash": "0x88df016429689c079f3b2f6ad39fa052532c56795b733da5e5d1b2e4db8f4a25",
+      "transactionIndex": "0x0",
+      "logIndex": "0x0",
+      "removed": false
+    }
+  }
+}`}
+                title="Log Event Notification"
+              />
+            </div>
+
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-zinc-200">Shred Notification</h4>
+              <p className="text-zinc-300 mb-3">
+                For Shred subscriptions (empty subscription type), you'll receive full Shred objects with transactions, receipts, and state changes.
+              </p>
+              <CodeBlock
+                language="json"
+                code={`{
+  "jsonrpc": "2.0",
+  "method": "rise_subscription",
+  "params": {
+    "subscription": "0x9ce59a13059e417087c02d3236a0b1cc",
+    "result": {
+      "block_number": 1234567,
+      "shred_idx": 0,
+      "transactions": [
+        {
+          "transaction": {
+            "hash": "0x88df016429689c079f3b2f6ad39fa052532c56795b733da5e5d1b2e4db8f4a25",
+            "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f8c8C5",
+            "to": "0x9876543210fedcba9876543210fedcba98765432",
+            "value": "1000000000000000000",
+            "gas": "21000",
+            "gasPrice": "20000000000",
+            "nonce": 42,
+            "input": "0x"
+          },
+          "receipt": {
+            "status": "0x1",
+            "cumulativeGasUsed": "21000",
+            "logs": [],
+            "logsBloom": "0x..."
+          }
+        }
+      ],
+      "state_changes": {
+        "0x742d35Cc6634C0532925a3b844Bc9e7595f8c8C5": {
+          "nonce": 43,
+          "balance": "999000000000000000",
+          "storage": {},
+          "new_code": null
+        }
+      }
     }
   }
 }`}
                 title="Shred Notification"
-              />
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-2 text-zinc-200">Status Update</h4>
-              <p className="text-zinc-300 mb-3">
-                Sent when transaction status changes (e.g., from pending to confirmed).
-              </p>
-              <CodeBlock
-                language="json"
-                code={`{
-  "jsonrpc": "2.0",
-  "method": "shred_statusUpdate",
-  "params": {
-    "subscriptionId": "0x9ce59a13059e417087c02d3236a0b1cc",
-    "shredId": "0xf47ac10b58cc4372",
-    "transactionHash": "0x88df016429689c079f3b2f6ad39fa052532c56795b733da5e5d1b2e4db8f4a25",
-    "status": "confirmed",
-    "blockNumber": 1234567,
-    "blockHash": "0x1234567890abcdef...",
-    "confirmations": 1,
-    "gasUsed": "21000",
-    "effectiveGasPrice": "20000000000"
-  }
-}`}
-                title="Status Update"
-              />
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-2 text-zinc-200">Reorganization Alert</h4>
-              <p className="text-zinc-300 mb-3">
-                Sent when a blockchain reorganization affects transactions you're monitoring.
-              </p>
-              <CodeBlock
-                language="json"
-                code={`{
-  "jsonrpc": "2.0",
-  "method": "shred_reorgAlert",
-  "params": {
-    "subscriptionId": "0x9ce59a13059e417087c02d3236a0b1cc",
-    "affectedTransactions": [
-      "0x88df016429689c079f3b2f6ad39fa052532c56795b733da5e5d1b2e4db8f4a25"
-    ],
-    "fromBlock": 1234567,
-    "toBlock": 1234565,
-    "depth": 2
-  }
-}`}
-                title="Reorg Alert"
               />
             </div>
           </div>
@@ -635,7 +650,7 @@ client.subscribe({
                 <tr>
                   <td className="px-6 py-4 font-mono text-red-400">-32000</td>
                   <td className="px-6 py-4 text-zinc-300">Server error</td>
-                  <td className="px-6 py-4 text-zinc-400">Authentication failed</td>
+                  <td className="px-6 py-4 text-zinc-400">Internal server error</td>
                 </tr>
                 <tr>
                   <td className="px-6 py-4 font-mono text-red-400">-32001</td>
@@ -698,7 +713,7 @@ client.subscribe({
             <div className="bg-yellow-500/10 rounded-lg p-4 border border-yellow-500/20">
               <h4 className="text-lg font-semibold mb-2 text-yellow-300">Security</h4>
               <ul className="space-y-2 text-zinc-300">
-                <li>• Never expose API keys in client-side code</li>
+                <li>• Connection is open - no API keys needed</li>
                 <li>• Validate all incoming data</li>
                 <li>• Use TLS for all connections</li>
                 <li>• Implement request signing for sensitive operations</li>

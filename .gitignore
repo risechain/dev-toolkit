@@ -45,7 +45,7 @@ flatten_codebase.py
 
 # Helpers
 
-context/
+#context/
 screenshots/
 flattened-src.md
 flatten_codebase.py

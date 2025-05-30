@@ -1,7 +1,7 @@
 export const shredApiExamples = {
   getShredData: `
 // Basic WebSocket connection to Shreds API
-const ws = new WebSocket('wss://shreds.testnet.riselabs.xyz?apikey=YOUR_API_KEY');
+const ws = new WebSocket('wss://testnet.riselabs.xyz');
 
 ws.onopen = () => {
   console.log('Connected to Shreds API');
@@ -48,7 +48,7 @@ class ShredSubscriber {
   }
 
   connect() {
-    this.ws = new WebSocket(\`wss://shreds.testnet.riselabs.xyz?apikey=\${this.apiKey}\`);
+    this.ws = new WebSocket(\`wss://testnet.riselabs.xyz\`);
     
     this.ws.onopen = () => {
       // Subscribe to Transfer events

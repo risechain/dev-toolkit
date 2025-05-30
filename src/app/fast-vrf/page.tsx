@@ -1,33 +1,7 @@
 import SectionLandingPage from '@/components/templates/SectionLandingPage';
 import { FastVRFHero } from '@/components/sections/HeroContent';
-import { BookOpen, Cog, Code2 } from 'lucide-react';
 
 export default function FastVRFPage() {
-  const links = [
-    {
-      title: 'Explainer',
-      description: 'Learn how Fast VRF delivers instant, verifiable randomness in 10-100ms',
-      href: '/fast-vrf/explainer',
-      icon: <BookOpen size={32} />,
-      color: '#a855f7'
-    },
-    {
-      title: 'Integration Guide',
-      description: 'Step-by-step guide to implement Fast VRF in your smart contracts',
-      href: '/fast-vrf/integration',
-      icon: <Cog size={32} />,
-      color: '#c084fc'
-    },
-    {
-      title: 'Code Examples',
-      description: 'Ready-to-use Solidity contracts and backend implementation examples',
-      href: '/fast-vrf/code-examples',
-      icon: <Code2 size={32} />,
-      color: '#e879f9'
-    }
-  ];
-
-
   const customContent = (
     <div style={{ textAlign: 'center' }}>
       <h2 style={{ 
@@ -84,7 +58,6 @@ export default function FastVRFPage() {
       description="Protocol-native instant randomness delivering cryptographically secure random numbers in 10-100ms. Perfect for gaming, NFT minting, and any dApp requiring immediate verifiable entropy."
       currentSection="fast-vrf"
       heroContent={<FastVRFHero />}
-      links={links}
       customContent={customContent}
     />
   );

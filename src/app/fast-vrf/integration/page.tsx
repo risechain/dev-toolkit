@@ -25,17 +25,7 @@ export default function FastVRFIntegration() {
 
         <h2>Quick Start</h2>
 
-        <h3>1. Install Dependencies</h3>
-        <CodeBlock
-          language="bash"
-          code={`# Install RISE Chain SDK (when available)
-npm install @risechain/sdk
-
-# Or use standard Web3 libraries
-npm install ethers`}
-        />
-
-        <h3>2. Implement VRF Consumer Interface</h3>
+        <h3>1. Implement VRF Consumer Interface</h3>
         <p className="mb-4">Your contract must implement the IVRFConsumer interface to receive random numbers:</p>
         
         <CodeBlock
@@ -85,7 +75,7 @@ contract MyGame is IVRFConsumer {
 }`}
         />
 
-        <h3>3. Request Parameters</h3>
+        <h3>2. Request Parameters</h3>
         <div className="bg-surface-800 border border-surface-600 rounded-xl p-6 mb-6">
           <code className="text-lg">requestRandomNumbers(uint32 numNumbers, uint256 clientSeed)</code>
           <ul className="mt-4 space-y-2 text-gray-300">
@@ -95,7 +85,7 @@ contract MyGame is IVRFConsumer {
           </ul>
         </div>
 
-        <h3>4. Frontend Integration</h3>
+        <h3>3. Frontend Integration</h3>
         <CodeBlock
           language="javascript"
           code={`// Connect to RISE Chain
