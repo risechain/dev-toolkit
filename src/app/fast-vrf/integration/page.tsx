@@ -13,7 +13,7 @@ export default function FastVRFIntegration() {
       currentSection="fast-vrf"
     >
       {/* Quick Start */}
-      <section className="mb-16">
+      <section id="quick-start" className="mb-16">
         <motion.div 
           className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 mb-8"
           initial={{ opacity: 0, y: 20 }}
@@ -33,8 +33,13 @@ export default function FastVRFIntegration() {
           code={`// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IVRFConsumer} from "./VRFCoordinator.sol";
-
+interface IVRFConsumer {
+    function rawFulfillRandomNumbers(
+        uint256 requestId,
+        uint256[] memory randomNumbers
+    ) external;
+}
+    
 interface IVRFCoordinator {
     function requestRandomNumbers(uint32 numNumbers, uint256 clientSeed) 
         external returns (uint256 requestId);
@@ -113,7 +118,7 @@ contract.on('DiceRolled', (player, result) => {
       </section>
 
       {/* How It Works */}
-      <section className="mb-16">
+      <section id="how-it-works" className="mb-16">
         <h2>How It Works</h2>
         
         <div className="bg-surface-800 border border-surface-600 rounded-xl p-6 mb-8">
@@ -166,37 +171,147 @@ contract.on('DiceRolled', (player, result) => {
       </section>
 
       {/* Advanced: Shreds API */}
-      <section className="mb-16">
+      <section id="shreds-api" className="mb-16">
         <h2>Advanced: Ultra-Fast Results with Shreds API</h2>
         <p className="mb-6">
-          For applications requiring maximum speed, use RISE Chain's Shreds API to receive results before block confirmation:
+          For applications requiring maximum speed, use RISE Chain's rise_subscribe to receive VRF results in real-time through Shreds (sub-blocks):
         </p>
+
+        <div className="space-y-6">
+          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
+            <h3 className="text-xl font-semibold mb-3">Why use rise_subscribe?</h3>
+            <ul className="space-y-2 text-gray-300">
+              <li>• <strong>Shreds ≈ sub-blocks</strong> – each Shred is emitted before the final block and contains transactions, receipts, and state changes</li>
+              <li>• <strong>Millisecond latency</strong> – ideal for latency-sensitive dApps, games, and bots</li>
+              <li>• <strong>Real-time events</strong> – monitor contract events as soon as they're emitted</li>
+            </ul>
+          </div>
+
+          <h3>1. Computing Event Signatures</h3>
+          <p className="mb-4">First, compute the event signature (topic[0]) for the VRF events you want to monitor:</p>
+          <CodeBlock
+            language="javascript"
+            code={`import { ethers } from "ethers";
+
+// Compute event signatures for VRF events
+const REQUEST_RAISED_SIG = ethers.id("RequestRaised(uint256,address,uint32,uint256)");
+const REQUEST_FULFILLED_SIG = ethers.id("RequestFulfilled(uint256)");
+
+// For your custom events (e.g., DiceRolled)
+const DICE_ROLLED_SIG = ethers.id("DiceRolled(address,uint256)");`}
+          />
+
+          <h3 className="mt-8">2. WebSocket Subscription</h3>
+          <p className="mb-4">Subscribe to the VRF Coordinator and your contract events:</p>
+          <CodeBlock
+            language="typescript"
+            code={`import WebSocket from "ws";
+import { ethers } from "ethers";
+
+const WS_URL = "wss://testnet.riselabs.xyz/ws";
+const VRF_COORDINATOR = "0x9d57aB4517ba97349551C876a01a7580B1338909";
+const YOUR_CONTRACT = "YOUR_CONTRACT_ADDRESS";
+
+const ws = new WebSocket(WS_URL);
+
+ws.on("open", () => {
+    // Subscribe to VRF request fulfillment events
+    ws.send(JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "rise_subscribe",
+        params: [
+            "logs",
+            {
+                address: VRF_COORDINATOR,
+                topics: [REQUEST_FULFILLED_SIG]
+            }
+        ]
+    }));
+
+    // Subscribe to your contract's events (e.g., DiceRolled)
+    ws.send(JSON.stringify({
+        jsonrpc: "2.0",
+        id: 2,
+        method: "rise_subscribe",
+        params: [
+            "logs",
+            {
+                address: YOUR_CONTRACT,
+                topics: [DICE_ROLLED_SIG]
+            }
+        ]
+    }));
+});`}
+          />
+
+          <h3 className="mt-8">3. Processing Real-time Events</h3>
+          <p className="mb-4">Handle incoming events and trigger actions immediately:</p>
+          <CodeBlock
+            language="javascript"
+            code={`ws.on("message", (raw) => {
+    const msg = JSON.parse(raw.toString());
+
+    // Handle subscription confirmations
+    if (msg.id && msg.result) {
+        console.log("Subscribed with ID:", msg.result);
+        return;
+    }
+
+    // Handle real-time event notifications
+    if (msg.method === "rise_subscription") {
+        const log = msg.params.result;
         
-        <CodeBlock
-          language="javascript"
-          code={`// Using Shreds API for instant results
-const { WebSocketClient } = require('@risechain/shred-api');
-
-const client = new WebSocketClient('wss://shreds.risechain.com');
-
-// Subscribe to your contract events
-client.subscribeToEvents({
-    contractAddress: 'YOUR_CONTRACT_ADDRESS',
-    eventName: 'DiceRolled',
-    fromBlock: 'latest'
+        // Check which event was emitted
+        if (log.topics[0] === REQUEST_FULFILLED_SIG) {
+            // VRF request was fulfilled
+            const requestId = log.topics[1];
+            console.log("⚡ VRF Request fulfilled:", requestId);
+            
+            // Note: blockHash is null until block is finalized
+            // But the event data is already available!
+        }
+        
+        if (log.topics[0] === DICE_ROLLED_SIG) {
+            // Your contract event (e.g., DiceRolled)
+            const player = "0x" + log.topics[1].slice(26);
+            const result = BigInt(log.data).toString();
+            
+            console.log("🎲 Instant result:", {
+                player,
+                result,
+                tx: log.transactionHash
+            });
+            
+            // Update UI immediately - no need to wait for block confirmation!
+            updateGameUI(player, result);
+        }
+    }
 });
 
-// Receive results in milliseconds
-client.on('event', (event) => {
-    const { player, result } = event.args;
-    console.log(\`Instant result: Player \${player} rolled \${result}\`);
-    // Update UI immediately
-});`}
-        />
+// Example: Update game UI in real-time
+function updateGameUI(player, result) {
+    // Show result animation
+    // Update player stats
+    // Trigger next game action
+    console.log(\`Player \${player} rolled \${result} - updating UI now!\`);
+}`}
+          />
+
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 mt-8">
+            <h4 className="font-semibold mb-2">💡 Key Benefits</h4>
+            <ul className="space-y-2 text-gray-300">
+              <li>• <strong>Sub-second latency:</strong> Get results in milliseconds, not seconds</li>
+              <li>• <strong>No polling required:</strong> Events pushed to you automatically</li>
+              <li>• <strong>Build responsive dApps:</strong> Update UI instantly for better UX</li>
+              <li>• <strong>Perfect for games:</strong> Real-time dice rolls, loot drops, battle outcomes</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       {/* API Reference */}
-      <section className="mb-16">
+      <section id="api-reference" className="mb-16">
         <h2>API Reference</h2>
 
         <h3>VRF Coordinator Interface</h3>
@@ -242,7 +357,7 @@ event RequestFulfilled(uint256 indexed requestId);`}
       </section>
 
       {/* Best Practices */}
-      <section className="mb-16">
+      <section id="best-practices" className="mb-16">
         <h2>Best Practices</h2>
 
         <h3>Security Guidelines</h3>
@@ -280,73 +395,14 @@ event RequestFulfilled(uint256 indexed requestId);`}
           </div>
         </div>
 
-        <h3 className="mt-8">Gas Optimization</h3>
-        <ul className="space-y-2 text-gray-300">
-          <li>• Use uint256 for request tracking (most gas efficient)</li>
-          <li>• Delete mappings after fulfillment to get gas refunds</li>
-          <li>• Batch multiple random values in single request when possible</li>
-        </ul>
-
-        <h3 className="mt-8">Error Handling</h3>
-        <CodeBlock
-          language="solidity"
-          code={`function rawFulfillRandomNumbers(uint256 requestId, uint256[] calldata randomNumbers) external override {
-    // Validate caller
-    if (msg.sender != address(coordinator)) {
-        emit InvalidCaller(msg.sender);
-        return;
-    }
-    
-    // Validate request
-    if (requestOwner[requestId] == address(0)) {
-        emit UnknownRequest(requestId);
-        return;
-    }
-    
-    // Process random numbers...
-}`}
-        />
-      </section>
-
-      {/* Troubleshooting */}
-      <section className="mb-16">
-        <h2>Troubleshooting</h2>
-        
-        <div className="space-y-6">
-          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
-            <h3 className="text-lg font-semibold mb-3">Request Not Fulfilled</h3>
-            <ul className="space-y-2 text-gray-300">
-              <li>• Check that your contract implements IVRFConsumer correctly</li>
-              <li>• Ensure rawFulfillRandomNumbers is public/external</li>
-              <li>• Verify VRF Coordinator address is correct</li>
-            </ul>
-          </div>
-
-          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
-            <h3 className="text-lg font-semibold mb-3">Gas Estimation Errors</h3>
-            <ul className="space-y-2 text-gray-300">
-              <li>• Make sure your callback function doesn't consume too much gas</li>
-              <li>• Avoid complex computations in the callback</li>
-              <li>• Consider using events to log results instead of storage</li>
-            </ul>
-          </div>
-
-          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
-            <h3 className="text-lg font-semibold mb-3">Invalid Proof Errors</h3>
-            <ul className="space-y-2 text-gray-300">
-              <li>• This indicates a problem with the VRF backend - contact support</li>
-              <li>• Do not modify the random numbers before verification</li>
-            </ul>
-          </div>
-        </div>
       </section>
 
       {/* Support */}
-      <section className="mb-16">
+      <section id="support" className="mb-16">
         <h2>Support</h2>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           <a 
-            href="https://discord.gg/rise" 
+            href="https://discord.gg/qhKnePXdSM" 
             target="_blank"
             className="bg-surface-800 border border-surface-600 rounded-xl p-6 hover:border-purple-500/50 transition-colors block"
           >
@@ -355,20 +411,21 @@ event RequestFulfilled(uint256 indexed requestId);`}
           </a>
           
           <a 
-            href="https://github.com/rise-l2/vrf" 
+            href="https://github.com/risechain/support" 
             target="_blank"
             className="bg-surface-800 border border-surface-600 rounded-xl p-6 hover:border-purple-500/50 transition-colors block"
           >
-            <h3 className="font-semibold mb-2">GitHub</h3>
-            <p className="text-gray-400">View the VRF repository</p>
+            <h3 className="font-semibold mb-2">Report An Issue</h3>
+            <p className="text-gray-400">Report issues on GitHub</p>
           </a>
           
           <a 
-            href="mailto:builders@risechain.com" 
+            href="https://twitter.com/rise_chain" 
+            target="_blank"
             className="bg-surface-800 border border-surface-600 rounded-xl p-6 hover:border-purple-500/50 transition-colors block"
           >
-            <h3 className="font-semibold mb-2">Email</h3>
-            <p className="text-gray-400">Contact our team directly</p>
+            <h3 className="font-semibold mb-2">Latest Updates</h3>
+            <p className="text-gray-400">Follow us on Twitter</p>
           </a>
         </div>
       </section>

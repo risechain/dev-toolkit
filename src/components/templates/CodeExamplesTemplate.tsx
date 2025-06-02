@@ -29,7 +29,7 @@ export default function CodeExamplesTemplate({
 
   return (
     <PageLayout currentSection={currentSection}>
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto w-full">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4 gradient-text">{title}</h1>
           <p className="text-xl text-gray-400">{description}</p>
