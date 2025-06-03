@@ -9,7 +9,7 @@ interface ApiDemoProps {
   description: string;
   inputPlaceholder?: string;
   exampleCode: string;
-  onExecute: (input: string) => Promise<any>;
+  onExecute: (input: string) => Promise<unknown>;
 }
 
 export default function ApiDemo({ 

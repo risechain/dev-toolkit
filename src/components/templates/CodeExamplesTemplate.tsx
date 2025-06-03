@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import PageLayout from '../layout/PageLayout';
 import CodeBlock from '../ui/CodeBlock';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/Tabs';
@@ -28,7 +27,6 @@ export default function CodeExamplesTemplate({
   examples 
 }: CodeExamplesTemplateProps) {
   const [selectedExample, setSelectedExample] = useState(0);
-  const router = useRouter();
 
   useEffect(() => {
     const handleHashChange = () => {

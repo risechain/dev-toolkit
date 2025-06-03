@@ -193,7 +193,7 @@ export default function ShredApiData() {
         <div>
           <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Event Log Object</h2>
           <p className="text-zinc-300 mb-4">
-            When subscribed with <code className="text-blue-400">includeReceipts: true</code>, you'll receive decoded event logs.
+            When subscribed with <code className="text-blue-400">includeReceipts: true</code>, you&apos;ll receive decoded event logs.
           </p>
           
           <CodeBlock

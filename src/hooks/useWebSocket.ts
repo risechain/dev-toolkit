@@ -5,7 +5,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 interface WebSocketMessage {
   type: string;
   status?: string;
-  data?: any;
+  data?: unknown;
 }
 
 interface WebSocketHookOptions {
@@ -92,7 +92,7 @@ export function useWebSocket({
     }
   }, []);
 
-  const sendMessage = useCallback((message: any) => {
+  const sendMessage = useCallback((message: unknown) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(message));
     } else {

@@ -1,12 +1,12 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.rise.com';
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
   status: number;
 }
 
-export async function fetchAPI<T = any>(
+export async function fetchAPI<T = unknown>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
@@ -34,7 +34,7 @@ export async function fetchAPI<T = any>(
 }
 
 // Demo functions for the API examples
-export async function demoShredAPI(address: string): Promise<any> {
+export async function demoShredAPI(address: string): Promise<unknown> {
   // This is a demo function that simulates an API call
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -55,7 +55,7 @@ export async function demoShredAPI(address: string): Promise<any> {
   });
 }
 
-export async function demoVRFRequest(seed: string): Promise<any> {
+export async function demoVRFRequest(seed: string): Promise<unknown> {
   // This is a demo function that simulates a VRF request
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -69,7 +69,7 @@ export async function demoVRFRequest(seed: string): Promise<any> {
   });
 }
 
-export async function demoTimeOracle(): Promise<any> {
+export async function demoTimeOracle(): Promise<unknown> {
   // This is a demo function that simulates a time oracle request
   return new Promise((resolve) => {
     setTimeout(() => {

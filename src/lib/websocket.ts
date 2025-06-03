@@ -2,7 +2,7 @@ export class WebSocketDemo {
   private ws: WebSocket | null = null;
   private timeout: NodeJS.Timeout | null = null;
 
-  async connect(address: string): Promise<any> {
+  async connect(address: string): Promise<unknown> {
     return new Promise((resolve, reject) => {
       try {
         this.ws = new WebSocket('wss://your-rise-api-endpoint');
@@ -17,7 +17,7 @@ export class WebSocketDemo {
           this.disconnect();
         };
 
-        this.ws.onerror = (error) => {
+        this.ws.onerror = () => {
           reject(new Error('WebSocket connection failed'));
         };
 

@@ -2,7 +2,6 @@
 
 import DocPage from '@/components/templates/DocPage';
 import CodeBlock from '@/components/ui/CodeBlock';
-import { motion } from 'framer-motion';
 
 export default function FastVRFCodeExamples() {
   return (

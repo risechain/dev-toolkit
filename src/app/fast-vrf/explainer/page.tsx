@@ -2,7 +2,7 @@
 
 import DocPage from '@/components/templates/DocPage';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Coins, Code, Gamepad, Image, Ticket } from 'lucide-react';
+import { Zap, Shield, Gamepad, Image, Ticket } from 'lucide-react';
 import Link from 'next/link';
 
 const fadeInUp = {
@@ -34,7 +34,7 @@ export default function FastVRFExplainer() {
         transition={{ duration: 0.5 }}
       >
         <p className="text-lg text-gray-300">
-          Fast VRF is currently in MVP. See our <Link href="/fast-vrf/integration" className="text-purple-400 hover:text-purple-300 underline">integration guide</Link> to get started. Our MVP is primarily to provide a way for developers to simply integrate Random numbers with low latency into their applications, in future updates we'll be upgrading our RNG functionality to have more secure Randomness.
+          Fast VRF is currently in MVP. See our <Link href="/fast-vrf/integration" className="text-purple-400 hover:text-purple-300 underline">integration guide</Link> to get started. Our MVP is primarily to provide a way for developers to simply integrate Random numbers with low latency into their applications, in future updates we&apos;ll be upgrading our RNG functionality to have more secure Randomness.
         </p>
       </motion.div>
 

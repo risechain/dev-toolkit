@@ -4,14 +4,6 @@ import { ReactNode } from 'react';
 import PageLayout from '../layout/PageLayout';
 import { motion } from 'framer-motion';
 
-interface SectionLink {
-  title: string;
-  description: string;
-  href: string;
-  icon: ReactNode;
-  color: string;
-}
-
 interface SectionLandingPageProps {
   title: string;
   description: string;

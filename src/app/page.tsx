@@ -233,7 +233,7 @@ export default function HomePage() {
             <p className="text-xl text-gray-300 mb-8">
               Have questions or want to learn more about building on RISE? 
               <br />
-              We'd love to hear from you.
+              We&apos;d love to hear from you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a

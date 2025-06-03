@@ -12,15 +12,15 @@ export default function ShredApiExplainer() {
         <div>
           <h2 className="text-3xl font-semibold mb-6 text-zinc-100">What are Shreds?</h2>
           <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
-            Shreds are RISE Chain's breakthrough in blockchain data delivery. By streaming pre-confirmation transaction 
+            Shreds are RISE Chain&apos;s breakthrough in blockchain data delivery. By streaming pre-confirmation transaction 
             data directly to your application, shreds eliminate the traditional waiting period between transaction 
             submission and block confirmation. This transforms blockchain interactions from seconds-long waits into 
             millisecond-fast responses.
           </p>
           <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
             Traditional blockchains force applications to wait for block confirmations before reacting to transactions. 
-            RISE's Shred API provides a direct feed from the mempool, enabling your application to process transactions 
-            the moment they're submitted. This 99% reduction in latency enables entirely new categories of real-time 
+            RISE&apos;s Shred API provides a direct feed from the mempool, enabling your application to process transactions 
+            the moment they&apos;re submitted. This 99% reduction in latency enables entirely new categories of real-time 
             blockchain applications.
           </p>
         </div>
@@ -70,7 +70,7 @@ export default function ShredApiExplainer() {
               <span className="text-blue-400 mt-1">📡</span>
               <div>
                 <strong className="text-zinc-100">Pre-Confirmation Data:</strong>
-                <span className="text-zinc-300 block mt-1">Access transaction details before they're included in blocks, enabling optimistic UI updates.</span>
+                <span className="text-zinc-300 block mt-1">Access transaction details before they&apos;re included in blocks, enabling optimistic UI updates.</span>
               </div>
             </li>
             <li className="flex items-start gap-3">

@@ -125,7 +125,7 @@ ws.on('open', () => {
             </table>
           </div>
           <div className="mt-4 text-zinc-300">
-            <p className="mb-2">Both channels send notifications through the common <code className="text-blue-400">"rise_subscription"</code> envelope.</p>
+            <p className="mb-2">Both channels send notifications through the common <code className="text-blue-400">&quot;rise_subscription&quot;</code> envelope.</p>
             <p>For <code className="text-blue-400">logs</code> the <code className="text-blue-400">blockHash</code> field is <strong>null</strong> until the enclosing block is finalised.</p>
           </div>
         </div>
@@ -513,7 +513,7 @@ client.subscribe({
             <div>
               <h4 className="text-lg font-semibold mb-2 text-zinc-200">Initial Response</h4>
               <p className="text-zinc-300 mb-3">
-                After subscribing, you'll receive a confirmation with your subscription ID.
+                After subscribing, you&apos;ll receive a confirmation with your subscription ID.
               </p>
               <CodeBlock
                 language="json"
@@ -529,7 +529,7 @@ client.subscribe({
             <div>
               <h4 className="text-lg font-semibold mb-2 text-zinc-200">Log Notification</h4>
               <p className="text-zinc-300 mb-3">
-                For log subscriptions, you'll receive Ethereum-style Log objects. Note that <code className="text-blue-400">blockHash</code> is <strong>null</strong> until the block is finalized.
+                For log subscriptions, you&apos;ll receive Ethereum-style Log objects. Note that <code className="text-blue-400">blockHash</code> is <strong>null</strong> until the block is finalized.
               </p>
               <CodeBlock
                 language="json"
@@ -562,7 +562,7 @@ client.subscribe({
             <div>
               <h4 className="text-lg font-semibold mb-2 text-zinc-200">Shred Notification</h4>
               <p className="text-zinc-300 mb-3">
-                For Shred subscriptions (empty subscription type), you'll receive full Shred objects with transactions, receipts, and state changes.
+                For Shred subscriptions (empty subscription type), you&apos;ll receive full Shred objects with transactions, receipts, and state changes.
               </p>
               <CodeBlock
                 language="json"
