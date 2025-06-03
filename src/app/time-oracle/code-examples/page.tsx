@@ -72,7 +72,6 @@ schedule_response = requests.post(
           inputPlaceholder="No input needed - click Execute"
           exampleCode={timeOracleExamples.getCurrentTime}
           onExecute={demoTimeOracle}
-          hideInput={true}
         />
       )
     }
@@ -84,6 +83,8 @@ schedule_response = requests.post(
       description="Ready-to-use code examples for integrating with the Time Oracle"
       currentSection="time-oracle"
       tabs={tabs}
-    />
+    >
+      <div>{/* Content is provided through tabs */}</div>
+    </ApiRefPage>
   );
 }

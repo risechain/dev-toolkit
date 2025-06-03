@@ -141,7 +141,7 @@ export default function FastVRFExplainer() {
               bgColor: 'bg-blue-400/10'
             },
             {
-              icon: <Image className="w-8 h-8" />,
+              icon: <Image className="w-8 h-8" aria-label="NFT" />,
               title: 'NFT Minting',
               description: 'Random trait assignment, fair rarity distribution',
               color: 'text-green-400',

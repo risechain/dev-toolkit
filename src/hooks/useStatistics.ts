@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useWebSocket } from './useWebSocket';
+import type { WebSocketMessage } from './useWebSocket';
 
 interface Stats {
   tps: number;
@@ -24,9 +25,9 @@ export function useStatistics(): Statistics {
   // This will make the initial load much faster
 
   // WebSocket message handler
-  const handleWebSocketMessage = useCallback((message: { type: string; status: string; data: Stats }) => {
-    if (message.type === 'statsUpdate' && message.status === 'success') {
-      setStats(message.data);
+  const handleWebSocketMessage = useCallback((message: WebSocketMessage) => {
+    if (message.type === 'statsUpdate' && message.status === 'success' && message.data) {
+      setStats(message.data as Stats);
     }
   }, []);
 

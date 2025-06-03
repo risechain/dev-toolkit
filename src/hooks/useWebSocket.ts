@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react';
 
-interface WebSocketMessage {
+export interface WebSocketMessage {
   type: string;
   status?: string;
   data?: unknown;
@@ -29,7 +29,7 @@ export function useWebSocket({
 }: WebSocketHookOptions) {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectCountRef = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   const connect = useCallback(() => {

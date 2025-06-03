@@ -67,6 +67,8 @@ ws.run_forever()`}
       description="Ready-to-use code examples for integrating with the Shred API"
       currentSection="shred-api"
       tabs={tabs}
-    />
+    >
+      <div>{/* Content is provided through tabs */}</div>
+    </ApiRefPage>
   );
 }
