@@ -193,10 +193,6 @@ contract.on('DiceRolled', (player, result) => {
             language="javascript"
             code={`import { ethers } from "ethers";
 
-// Compute event signatures for VRF events
-const REQUEST_RAISED_SIG = ethers.id("RequestRaised(uint256,address,uint32,uint256)");
-const REQUEST_FULFILLED_SIG = ethers.id("RequestFulfilled(uint256)");
-
 // For your custom events (e.g., DiceRolled)
 const DICE_ROLLED_SIG = ethers.id("DiceRolled(address,uint256)");`}
           />
@@ -209,25 +205,11 @@ const DICE_ROLLED_SIG = ethers.id("DiceRolled(address,uint256)");`}
 import { ethers } from "ethers";
 
 const WS_URL = "wss://testnet.riselabs.xyz/ws";
-const VRF_COORDINATOR = "0x9d57aB4517ba97349551C876a01a7580B1338909";
 const YOUR_CONTRACT = "YOUR_CONTRACT_ADDRESS";
 
 const ws = new WebSocket(WS_URL);
 
 ws.on("open", () => {
-    // Subscribe to VRF request fulfillment events
-    ws.send(JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: "rise_subscribe",
-        params: [
-            "logs",
-            {
-                address: VRF_COORDINATOR,
-                topics: [REQUEST_FULFILLED_SIG]
-            }
-        ]
-    }));
 
     // Subscribe to your contract's events (e.g., DiceRolled)
     ws.send(JSON.stringify({
@@ -261,17 +243,6 @@ ws.on("open", () => {
     // Handle real-time event notifications
     if (msg.method === "rise_subscription") {
         const log = msg.params.result;
-        
-        // Check which event was emitted
-        if (log.topics[0] === REQUEST_FULFILLED_SIG) {
-            // VRF request was fulfilled
-            const requestId = log.topics[1];
-            console.log("⚡ VRF Request fulfilled:", requestId);
-            
-            // Note: blockHash is null until block is finalized
-            // But the event data is already available!
-        }
-        
         if (log.topics[0] === DICE_ROLLED_SIG) {
             // Your contract event (e.g., DiceRolled)
             const player = "0x" + log.topics[1].slice(26);

@@ -26,6 +26,18 @@ export default function FastVRFExplainer() {
       description="Protocol-native near instant randomness delivering cryptographically secure random numbers in 10-100ms"
       currentSection="fast-vrf"
     >
+      {/* MVP Status Notice */}
+      <motion.div 
+        className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <p className="text-lg text-gray-300">
+          Fast VRF is currently in MVP. See our <Link href="/fast-vrf/integration" className="text-purple-400 hover:text-purple-300 underline">integration guide</Link> to get started. Our MVP is primarily to provide a way for developers to simply integrate Random numbers with low latency into their applications, in future updates we'll be upgrading our RNG functionality to have more secure Randomness.
+        </p>
+      </motion.div>
+
       {/* Hero Section */}
       <motion.section 
         className="mb-16"
@@ -44,12 +56,11 @@ export default function FastVRFExplainer() {
         </motion.div>
 
         {/* Metrics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-12">
           {[
             { value: '10-100ms', label: 'Response Time', color: 'text-purple-400' },
             { value: '99%', label: 'Latency Reduction', color: 'text-purple-400' },
-            { value: 'ECDSA', label: 'Cryptographic Proof', color: 'text-purple-400' },
-            { value: 'Zero Gas', label: 'Random Generation', color: 'text-purple-400' }
+            { value: 'ECDSA', label: 'Cryptographic Proof', color: 'text-purple-400' }
           ].map((metric, index) => (
             <motion.div
               key={index}
@@ -179,14 +190,6 @@ export default function FastVRFExplainer() {
         </div>
       </section>
 
-      {/* Current Status */}
-      <section className="mb-16">
-        <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6">
-          <p className="text-lg text-gray-300">
-            Fast VRF is currently in MVP. See our <Link href="/fast-vrf/integration" className="text-purple-400 hover:text-purple-300 underline">integration guide</Link> to get started. Our MVP is primarily to provide a way for developers to simply integrate Random numbers with low latency into their applications, in future updates we'll be upgrading our RNG functionality to have more secure Randomness.
-          </p>
-        </div>
-      </section>
     </DocPage>
   );
 }
