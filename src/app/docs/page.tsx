@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, Book, Code, Database, Zap, Shuffle, Clock } from 'lucide-react';
+import { ArrowRight, Book, Code, Zap, Shuffle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const fadeInUp = {
@@ -42,7 +41,7 @@ export default function DocsPage() {
               </span>
             </h1>
             <p className="text-xl text-gray-400 leading-relaxed">
-              Everything you need to build on RISE's ultra-fast Layer 2 blockchain
+              Everything you need to build on RISE&apos;s ultra-fast Layer 2 blockchain
             </p>
           </motion.div>
           

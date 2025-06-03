@@ -35,7 +35,7 @@ export default function ShredAPIPage() {
                 </div>
                 <h2 className="text-3xl font-display font-bold text-white">Coming Soon</h2>
                 <p className="text-lg text-gray-400 max-w-md text-center">
-                  We're working hard to bring you the most powerful real-time transaction streaming API. Stay tuned for updates!
+                  We&apos;re working hard to bring you the most powerful real-time transaction streaming API. Stay tuned for updates!
                 </p>
               </div>
             </div>

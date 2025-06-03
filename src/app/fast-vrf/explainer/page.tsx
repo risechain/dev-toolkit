@@ -2,7 +2,7 @@
 
 import DocPage from '@/components/templates/DocPage';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Coins, Code, Gamepad, Image, Ticket } from 'lucide-react';
+import { Zap, Shield, Gamepad, Image, Ticket } from 'lucide-react';
 import Link from 'next/link';
 
 const fadeInUp = {
@@ -34,7 +34,7 @@ export default function FastVRFExplainer() {
         transition={{ duration: 0.5 }}
       >
         <p className="text-lg text-gray-300">
-          Fast VRF is currently in MVP. See our <Link href="/fast-vrf/integration" className="text-purple-400 hover:text-purple-300 underline">integration guide</Link> to get started. Our MVP is primarily to provide a way for developers to simply integrate Random numbers with low latency into their applications, in future updates we'll be upgrading our RNG functionality to have more secure Randomness.
+          Fast VRF is currently in MVP. See our <Link href="/fast-vrf/integration" className="text-purple-400 hover:text-purple-300 underline">integration guide</Link> to get started. Our MVP is primarily to provide a way for developers to simply integrate Random numbers with low latency into their applications, in future updates we&apos;ll be upgrading our RNG functionality to have more secure Randomness.
         </p>
       </motion.div>
 
@@ -99,24 +99,6 @@ export default function FastVRFExplainer() {
                 'Tamper-proof random number generation',
                 'Verifiable proofs for complete transparency'
               ]
-            },
-            {
-              icon: <Coins className="w-6 h-6" />,
-              title: 'Zero Gas Costs',
-              points: [
-                'No gas fees for random number requests',
-                'Cost-effective for high-frequency applications',
-                'Perfect for gaming and real-time applications'
-              ]
-            },
-            {
-              icon: <Code className="w-6 h-6" />,
-              title: 'Developer Friendly',
-              points: [
-                'Simple smart contract integration',
-                'Comprehensive documentation and examples',
-                'Full TypeScript/JavaScript SDK support'
-              ]
             }
           ].map((feature, index) => (
             <motion.div
@@ -159,7 +141,7 @@ export default function FastVRFExplainer() {
               bgColor: 'bg-blue-400/10'
             },
             {
-              icon: <Image className="w-8 h-8" />,
+              icon: <Image className="w-8 h-8" aria-label="NFT" />,
               title: 'NFT Minting',
               description: 'Random trait assignment, fair rarity distribution',
               color: 'text-green-400',

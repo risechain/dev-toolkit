@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useWebSocket } from './useWebSocket';
+import type { WebSocketMessage } from './useWebSocket';
 
 interface Stats {
   tps: number;
@@ -19,21 +20,19 @@ interface Statistics {
 
 export function useStatistics(): Statistics {
   const [stats, setStats] = useState<Stats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   // We don't need to fetch initial data since we only care about WebSocket stats
   // This will make the initial load much faster
 
   // WebSocket message handler
-  const handleWebSocketMessage = useCallback((message: any) => {
-    if (message.type === 'statsUpdate' && message.status === 'success') {
-      setStats(message.data);
-      setIsLoading(false); // Set loading to false once we receive the first stats update
+  const handleWebSocketMessage = useCallback((message: WebSocketMessage) => {
+    if (message.type === 'statsUpdate' && message.status === 'success' && message.data) {
+      setStats(message.data as Stats);
     }
   }, []);
 
   // Connect to WebSocket
-  const { isConnected } = useWebSocket({
+  useWebSocket({
     url: process.env.NEXT_PUBLIC_WS_URL || 'wss://block-indexer-api.fly.dev:3002',
     onMessage: handleWebSocketMessage,
     onOpen: () => console.log('Stats WebSocket connected'),

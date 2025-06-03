@@ -35,7 +35,7 @@ export default function TimeOraclePage() {
                 </div>
                 <h2 className="text-3xl font-display font-bold text-white">Coming Soon</h2>
                 <p className="text-lg text-gray-400 max-w-md text-center">
-                  We're building the most accurate time oracle for blockchain applications. Stay tuned for updates!
+                  We&apos;re building the most accurate time oracle for blockchain applications. Stay tuned for updates!
                 </p>
               </div>
             </div>

@@ -2,7 +2,6 @@
 
 import DocPage from '@/components/templates/DocPage';
 import CodeBlock from '@/components/ui/CodeBlock';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { motion } from 'framer-motion';
 
 export default function FastVRFIntegration() {
@@ -174,7 +173,7 @@ contract.on('DiceRolled', (player, result) => {
       <section id="shreds-api" className="mb-16">
         <h2>Advanced: Ultra-Fast Results with Shreds API</h2>
         <p className="mb-6">
-          For applications requiring maximum speed, use RISE Chain's rise_subscribe to receive VRF results in real-time through Shreds (sub-blocks):
+          For applications requiring maximum speed, use RISE Chain&apos;s rise_subscribe to receive VRF results in real-time through Shreds (sub-blocks):
         </p>
 
         <div className="space-y-6">
@@ -183,7 +182,7 @@ contract.on('DiceRolled', (player, result) => {
             <ul className="space-y-2 text-gray-300">
               <li>• <strong>Shreds ≈ sub-blocks</strong> – each Shred is emitted before the final block and contains transactions, receipts, and state changes</li>
               <li>• <strong>Millisecond latency</strong> – ideal for latency-sensitive dApps, games, and bots</li>
-              <li>• <strong>Real-time events</strong> – monitor contract events as soon as they're emitted</li>
+              <li>• <strong>Real-time events</strong> – monitor contract events as soon as they&apos;re emitted</li>
             </ul>
           </div>
 

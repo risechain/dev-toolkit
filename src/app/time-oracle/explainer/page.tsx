@@ -12,7 +12,7 @@ export default function TimeOracleExplainer() {
         <div>
           <h2 className="text-3xl font-semibold mb-6 text-zinc-100">What is Time Oracle?</h2>
           <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
-            RISE's Time Oracle provides cryptographically secure, millisecond-accurate timestamps 
+            RISE&apos;s Time Oracle provides cryptographically secure, millisecond-accurate timestamps 
             for blockchain applications. Unlike traditional block timestamps, our Time Oracle delivers 
             real-time precision essential for DeFi, gaming, and time-sensitive smart contracts.
           </p>
