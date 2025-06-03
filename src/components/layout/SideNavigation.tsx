@@ -81,9 +81,14 @@ export default function SideNavigation({ currentSection }: SideNavigationProps) 
   };
 
   return (
-    <div className="fixed top-16 w-64 h-[calc(100vh-4rem)] border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+    <div className="hidden lg:block fixed top-16 w-64 h-[calc(100vh-4rem)] border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
       <div className="h-14 border-b border-zinc-800 flex items-center px-6">
-        <h2 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider">{section.replace('-', ' ')}</h2>
+        <Link 
+          href={`/${section}`}
+          className="text-sm font-semibold text-zinc-300 uppercase tracking-wider hover:text-blue-400 transition-colors"
+        >
+          {section.replace('-', ' ')}
+        </Link>
       </div>
       <nav className="py-6 px-4">
         <ul className="space-y-1">

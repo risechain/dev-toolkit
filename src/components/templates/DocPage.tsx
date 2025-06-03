@@ -26,7 +26,7 @@ export default function DocPage({
   return (
     <PageLayout currentSection={currentSection}>
       <motion.div 
-        className="max-w-4xl"
+        className="max-w-5xl mx-auto w-full"
         initial="initial"
         animate="animate"
       >

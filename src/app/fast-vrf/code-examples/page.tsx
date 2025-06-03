@@ -1,14 +1,24 @@
 'use client';
 
-import CodeExamplesTemplate from '@/components/templates/CodeExamplesTemplate';
+import DocPage from '@/components/templates/DocPage';
+import CodeBlock from '@/components/ui/CodeBlock';
+import { motion } from 'framer-motion';
 
-const codeExamples = [
-  {
-    id: 'basic-integration',
-    title: 'Basic Integration',
-    description: 'Simple example of integrating VRF into your smart contract',
-    language: 'solidity',
-    code: `// SPDX-License-Identifier: MIT
+export default function FastVRFCodeExamples() {
+  return (
+    <DocPage
+      title="Fast VRF Code Examples"
+      description="Learn how to integrate Fast VRF into your application"
+      currentSection="fast-vrf"
+    >
+      {/* Basic Integration */}
+      <section id="basic-integration" className="mb-16">
+        <h2>Basic Integration</h2>
+        <p className="mb-6">Simple example of integrating VRF into your smart contract</p>
+        
+        <CodeBlock
+          language="solidity"
+          code={`// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 // VRF Interfaces
@@ -56,14 +66,18 @@ contract MyRandomContract is IVRFConsumer {
         
         emit RandomNumbersReceived(requestId, randomNumbers);
     }
-}`
-  },
-  {
-    id: 'dice-game',
-    title: 'Simple Dice Game',
-    description: 'On-chain dice game using VRF for fair randomness',
-    language: 'solidity',
-    code: `// SPDX-License-Identifier: MIT
+}`}
+        />
+      </section>
+
+      {/* Simple Dice Game */}
+      <section id="dice-game" className="mb-16">
+        <h2>Simple Dice Game</h2>
+        <p className="mb-6">On-chain dice game using VRF for fair randomness</p>
+        
+        <CodeBlock
+          language="solidity"
+          code={`// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 // VRF Interfaces
@@ -112,14 +126,18 @@ contract DiceGame is IVRFConsumer {
         
         delete requestOwner[requestId];
     }
-}`
-  },
-  {
-    id: 'random-nft',
-    title: 'NFT with Random Traits',
-    description: 'Mint NFTs with verifiably random attributes',
-    language: 'solidity',
-    code: `// SPDX-License-Identifier: MIT
+}`}
+        />
+      </section>
+
+      {/* NFT with Random Traits */}
+      <section id="random-nft" className="mb-16">
+        <h2>NFT with Random Traits</h2>
+        <p className="mb-6">Mint NFTs with verifiably random attributes</p>
+        
+        <CodeBlock
+          language="solidity"
+          code={`// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -182,14 +200,18 @@ contract RandomNFT is ERC721, IVRFConsumer {
         _mint(recipient, tokenId);
         delete pendingMints[requestId];
     }
-}`
-  },
-  {
-    id: 'lottery-system',
-    title: 'Lottery System',
-    description: 'Fair lottery contract using VRF for winner selection',
-    language: 'solidity',
-    code: `// SPDX-License-Identifier: MIT
+}`}
+        />
+      </section>
+
+      {/* Lottery System */}
+      <section id="lottery-system" className="mb-16">
+        <h2>Lottery System</h2>
+        <p className="mb-6">Fair lottery contract using VRF for winner selection</p>
+        
+        <CodeBlock
+          language="solidity"
+          code={`// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 // VRF Interfaces
@@ -252,14 +274,18 @@ contract Lottery is IVRFConsumer {
         delete participants;
         drawInProgress = false;
     }
-}`
-  },
-  {
-    id: 'shreds-integration',
-    title: 'Shreds API Integration',
-    description: 'JavaScript example using Shreds API for instant randomness',
-    language: 'typescript',
-    code: `import Web3 from 'web3';
+}`}
+        />
+      </section>
+
+      {/* Shreds API Integration */}
+      <section id="shreds-integration" className="mb-16">
+        <h2>Shreds API Integration</h2>
+        <p className="mb-6">JavaScript example using Shreds API for instant randomness</p>
+        
+        <CodeBlock
+          language="typescript"
+          code={`import Web3 from 'web3';
 
 const SHREDS_API_URL = 'wss://testnet.riselabs.xyz/ws';
 const VRF_COORDINATOR = '0x9d57aB4517ba97349551C876a01a7580B1338909';
@@ -297,17 +323,9 @@ class VRFClient {
     const { requestId, randomNumbers, proof } = message.data;
     console.log(\`VRF Request \${requestId} fulfilled:\`, randomNumbers);
   }
-}`
-  }
-];
-
-export default function FastVRFCodeExamplesPage() {
-  return (
-    <CodeExamplesTemplate
-      title="Fast VRF Code Examples"
-      description="Learn how to integrate Fast VRF into your application"
-      currentSection="fast-vrf"
-      examples={codeExamples}
-    />
+}`}
+        />
+      </section>
+    </DocPage>
   );
 }

@@ -119,7 +119,12 @@ subscriber.connect();
 export const vrfExamples = {
   requestRandomness: `
 // Smart Contract Integration
-import {IVRFConsumer} from "./VRFCoordinator.sol";
+interface IVRFConsumer {
+    function rawFulfillRandomNumbers(
+        uint256 requestId,
+        uint256[] memory randomNumbers
+    ) external;
+}
 
 contract MyGame is IVRFConsumer {
     mapping(uint256 => address) public requestIdToPlayer;

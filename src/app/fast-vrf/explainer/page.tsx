@@ -2,7 +2,8 @@
 
 import DocPage from '@/components/templates/DocPage';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Coins, Code, Gamepad, Image, Ticket, TrendingUp, Shuffle } from 'lucide-react';
+import { Zap, Shield, Coins, Code, Gamepad, Image, Ticket } from 'lucide-react';
+import Link from 'next/link';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -21,10 +22,22 @@ const stagger = {
 export default function FastVRFExplainer() {
   return (
     <DocPage
-      title="RISE VRF - Instant Randomness for Blockchain Applications"
-      description="Protocol-native instant randomness delivering cryptographically secure random numbers in 10-100ms"
+      title="Fast VRF"
+      description="Protocol-native near instant randomness delivering cryptographically secure random numbers in 10-100ms"
       currentSection="fast-vrf"
     >
+      {/* MVP Status Notice */}
+      <motion.div 
+        className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <p className="text-lg text-gray-300">
+          Fast VRF is currently in MVP. See our <Link href="/fast-vrf/integration" className="text-purple-400 hover:text-purple-300 underline">integration guide</Link> to get started. Our MVP is primarily to provide a way for developers to simply integrate Random numbers with low latency into their applications, in future updates we'll be upgrading our RNG functionality to have more secure Randomness.
+        </p>
+      </motion.div>
+
       {/* Hero Section */}
       <motion.section 
         className="mb-16"
@@ -43,12 +56,11 @@ export default function FastVRFExplainer() {
         </motion.div>
 
         {/* Metrics Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-12">
           {[
             { value: '10-100ms', label: 'Response Time', color: 'text-purple-400' },
             { value: '99%', label: 'Latency Reduction', color: 'text-purple-400' },
-            { value: 'ECDSA', label: 'Cryptographic Proof', color: 'text-purple-400' },
-            { value: 'Zero Gas', label: 'Random Generation', color: 'text-purple-400' }
+            { value: 'ECDSA', label: 'Cryptographic Proof', color: 'text-purple-400' }
           ].map((metric, index) => (
             <motion.div
               key={index}
@@ -68,11 +80,11 @@ export default function FastVRFExplainer() {
       <section className="mb-16">
         <h2>Why Choose RISE VRF?</h2>
         
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {[
             {
               icon: <Zap className="w-6 h-6" />,
-              title: '🚀 Lightning Fast',
+              title: 'Lightning Fast',
               points: [
                 'Response times as low as 10ms',
                 '99% faster than traditional blockchain VRF solutions',
@@ -81,7 +93,7 @@ export default function FastVRFExplainer() {
             },
             {
               icon: <Shield className="w-6 h-6" />,
-              title: '🔒 Cryptographically Secure',
+              title: 'Cryptographically Secure',
               points: [
                 'ECDSA signature verification on every request',
                 'Tamper-proof random number generation',
@@ -90,7 +102,7 @@ export default function FastVRFExplainer() {
             },
             {
               icon: <Coins className="w-6 h-6" />,
-              title: '⚡ Zero Gas Costs',
+              title: 'Zero Gas Costs',
               points: [
                 'No gas fees for random number requests',
                 'Cost-effective for high-frequency applications',
@@ -99,7 +111,7 @@ export default function FastVRFExplainer() {
             },
             {
               icon: <Code className="w-6 h-6" />,
-              title: '🛠️ Developer Friendly',
+              title: 'Developer Friendly',
               points: [
                 'Simple smart contract integration',
                 'Comprehensive documentation and examples',
@@ -137,42 +149,28 @@ export default function FastVRFExplainer() {
       <section className="mb-16">
         <h2>Perfect For</h2>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {[
             {
               icon: <Gamepad className="w-8 h-8" />,
-              title: '🎮 Gaming',
+              title: 'Gaming',
               description: 'Instant loot drops, fair dice rolls, battle outcomes',
               color: 'text-blue-400',
               bgColor: 'bg-blue-400/10'
             },
             {
               icon: <Image className="w-8 h-8" />,
-              title: '🖼️ NFT Minting',
+              title: 'NFT Minting',
               description: 'Random trait assignment, fair rarity distribution',
               color: 'text-green-400',
               bgColor: 'bg-green-400/10'
             },
             {
               icon: <Ticket className="w-8 h-8" />,
-              title: '🎫 Lotteries',
+              title: 'Lotteries',
               description: 'Provably fair winner selection',
               color: 'text-yellow-400',
               bgColor: 'bg-yellow-400/10'
-            },
-            {
-              icon: <TrendingUp className="w-8 h-8" />,
-              title: '💰 DeFi',
-              description: 'Random validator selection, fair distributions',
-              color: 'text-red-400',
-              bgColor: 'bg-red-400/10'
-            },
-            {
-              icon: <Shuffle className="w-8 h-8" />,
-              title: '🔀 Any Application',
-              description: 'Requiring instant, verifiable randomness',
-              color: 'text-purple-400',
-              bgColor: 'bg-purple-400/10'
             }
           ].map((useCase, index) => (
             <motion.div
@@ -192,91 +190,6 @@ export default function FastVRFExplainer() {
         </div>
       </section>
 
-      {/* Security Features */}
-      <section className="mb-16">
-        <h2>Security Features</h2>
-        
-        <div className="space-y-6">
-          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
-            <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-              🔐 Cryptographic Verification
-            </h3>
-            <ul className="space-y-2 text-gray-300">
-              <li>• Every response includes an ECDSA signature from the authorized backend</li>
-              <li>• On-chain verification ensures no tampering has occurred</li>
-              <li>• Request-specific proofs prevent replay attacks</li>
-            </ul>
-          </div>
-
-          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
-            <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-              🎯 Unpredictable Generation
-            </h3>
-            <ul className="space-y-2 text-gray-300">
-              <li>• ChaCha20 CSPRNG with entropy from request parameters</li>
-              <li>• Client-provided seeds enhance unpredictability</li>
-              <li>• Backend cannot predict or manipulate outcomes</li>
-            </ul>
-          </div>
-
-          <div className="bg-surface-800 border border-surface-600 rounded-xl p-6">
-            <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-              ⚡ Instant Confirmation
-            </h3>
-            <ul className="space-y-2 text-gray-300">
-              <li>• Unlike traditional VRF solutions that require multiple block confirmations</li>
-              <li>• RISE VRF delivers verified randomness in milliseconds</li>
-              <li>• Perfect for real-time applications and gaming</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Roadmap */}
-      <section className="mb-16">
-        <h2>Roadmap</h2>
-        
-        <div className="space-y-6">
-          <div className="bg-gradient-to-r from-purple-500/10 to-transparent border-l-4 border-purple-500 pl-6 py-4">
-            <h3 className="text-xl font-semibold mb-2">🚀 Q1 2024</h3>
-            <ul className="space-y-1 text-gray-300">
-              <li>• Subscription-based gas payment model</li>
-              <li>• Batch request optimization</li>
-              <li>• Enhanced monitoring dashboard</li>
-            </ul>
-          </div>
-
-          <div className="bg-gradient-to-r from-purple-500/10 to-transparent border-l-4 border-purple-500 pl-6 py-4">
-            <h3 className="text-xl font-semibold mb-2">⚡ Q2 2024</h3>
-            <ul className="space-y-1 text-gray-300">
-              <li>• Native protocol randomness integration</li>
-              <li>• Sub-10ms response times</li>
-              <li>• Multi-chain support</li>
-            </ul>
-          </div>
-
-          <div className="bg-gradient-to-r from-purple-500/10 to-transparent border-l-4 border-purple-500 pl-6 py-4">
-            <h3 className="text-xl font-semibold mb-2">🛠️ Q3 2024</h3>
-            <ul className="space-y-1 text-gray-300">
-              <li>• Advanced entropy sources</li>
-              <li>• Custom proof verification</li>
-              <li>• Enterprise SLA options</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-8 bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 text-center">
-          <p className="text-lg text-gray-300 mb-4">
-            RISE VRF is currently in private beta. Contact us to get early access and help shape the future of instant randomness.
-          </p>
-          <a 
-            href="mailto:builders@risechain.com" 
-            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-semibold transition-colors"
-          >
-            Get Early Access
-          </a>
-        </div>
-      </section>
     </DocPage>
   );
 }
