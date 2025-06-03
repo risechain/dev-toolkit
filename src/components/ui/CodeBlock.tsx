@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Copy, Check, Terminal } from 'lucide-react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface CodeBlockProps {
@@ -22,9 +21,14 @@ export default function CodeBlock({
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   };
 
   return (
@@ -47,8 +51,9 @@ export default function CodeBlock({
             </span>
           </div>
           
-          <CopyToClipboard text={code} onCopy={handleCopy}>
-            <button className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-surface-800 hover:bg-surface-700 text-gray-400 hover:text-gray-200 transition-all duration-200 text-sm">
+          <button 
+            onClick={handleCopy}
+            className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-surface-800 hover:bg-surface-700 text-gray-400 hover:text-gray-200 transition-all duration-200 text-sm">
               <AnimatePresence mode="wait">
                 {copied ? (
                   <motion.div
@@ -75,7 +80,6 @@ export default function CodeBlock({
                 )}
               </AnimatePresence>
             </button>
-          </CopyToClipboard>
         </div>
 
         {/* Code content */}

@@ -99,24 +99,6 @@ export default function FastVRFExplainer() {
                 'Tamper-proof random number generation',
                 'Verifiable proofs for complete transparency'
               ]
-            },
-            {
-              icon: <Coins className="w-6 h-6" />,
-              title: 'Zero Gas Costs',
-              points: [
-                'No gas fees for random number requests',
-                'Cost-effective for high-frequency applications',
-                'Perfect for gaming and real-time applications'
-              ]
-            },
-            {
-              icon: <Code className="w-6 h-6" />,
-              title: 'Developer Friendly',
-              points: [
-                'Simple smart contract integration',
-                'Comprehensive documentation and examples',
-                'Full TypeScript/JavaScript SDK support'
-              ]
             }
           ].map((feature, index) => (
             <motion.div
