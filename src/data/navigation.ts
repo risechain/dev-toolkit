@@ -15,12 +15,24 @@ export const sideNavigation: Record<string, NavItem[]> = {
   'shred-api': [
     { title: 'Explainer', href: '/shred-api/explainer' },
     { 
-      title: 'API Docs', 
+      title: 'JSON RPC API', 
       href: '/shred-api/api-docs',
       children: [
-        { title: 'Getting Started', href: '/shred-api/api-docs#getting-started' },
+        { title: 'Connection Setup', href: '/shred-api/api-docs#connection-setup' },
         { title: 'RPC Methods', href: '/shred-api/api-docs#rpc-methods' },
-        { title: 'WebSocket', href: '/shred-api/api-docs#websocket' },
+        { title: 'Message Types', href: '/shred-api/api-docs#message-types' },
+        { title: 'Error Handling', href: '/shred-api/api-docs#error-handling' },
+      ]
+    },
+    { 
+      title: 'TypeScript Client', 
+      href: '/shred-api/typescript-client',
+      children: [
+        { title: 'Installation', href: '/shred-api/typescript-client#installation' },
+        { title: 'Quick Start', href: '/shred-api/typescript-client#quick-start' },
+        { title: 'Contract Events', href: '/shred-api/typescript-client#contract-events' },
+        { title: 'API Reference', href: '/shred-api/typescript-client#api-reference' },
+        { title: 'Best Practices', href: '/shred-api/typescript-client#best-practices' },
       ]
     },
     { title: 'Code Examples', href: '/shred-api/code-examples' },
