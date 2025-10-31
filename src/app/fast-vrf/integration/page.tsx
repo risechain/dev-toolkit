@@ -390,7 +390,7 @@ event RequestFulfilled(uint256 indexed requestId);`}
           </a>
           
           <a 
-            href="https://twitter.com/rise_chain" 
+            href="https://x.com/risechain" 
             target="_blank"
             className="bg-surface-800 border border-surface-600 rounded-xl p-6 hover:border-purple-500/50 transition-colors block"
           >
