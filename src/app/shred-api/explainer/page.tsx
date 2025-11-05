@@ -251,18 +251,44 @@ shreds.subscribe({
         </div>
 
         <div>
-          <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Next Steps</h2>
+          <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Choose Your Integration Method</h2>
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-zinc-900/50 rounded-lg p-6 border border-zinc-800">
+              <h3 className="text-xl font-semibold mb-3 text-blue-400">JSON RPC API</h3>
+              <p className="text-zinc-300 mb-4">Direct WebSocket connection using JSON-RPC protocol. Maximum flexibility and control.</p>
+              <ul className="space-y-2 text-zinc-400 text-sm mb-4">
+                <li>• Raw WebSocket connection</li>
+                <li>• Language agnostic</li>
+                <li>• Full protocol control</li>
+                <li>• Custom implementation required</li>
+              </ul>
+              <a href="/shred-api/api-docs" className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                View JSON RPC Docs →
+              </a>
+            </div>
+            <div className="bg-zinc-900/50 rounded-lg p-6 border border-zinc-800">
+              <h3 className="text-xl font-semibold mb-3 text-green-400">TypeScript Client Library</h3>
+              <p className="text-zinc-300 mb-4">High-level TypeScript client built on Viem. Type-safe and easy to use.</p>
+              <ul className="space-y-2 text-zinc-300 text-sm mb-4">
+                <li>• Built on Viem framework</li>
+                <li>• Full TypeScript support</li>
+                <li>• Automatic reconnection</li>
+                <li>• Ready-to-use abstractions</li>
+              </ul>
+              <a href="/shred-api/typescript-client" className="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                View TypeScript Docs →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-3xl font-semibold mb-6 text-zinc-100">Additional Resources</h2>
           <div className="bg-blue-500/10 rounded-lg p-6 border border-blue-500/20">
             <p className="text-zinc-300 mb-4">
-              Ready to build real-time blockchain applications? Explore our comprehensive documentation:
+              Explore our comprehensive documentation and examples:
             </p>
             <ul className="space-y-2">
-              <li>
-                <a href="/shred-api/api-docs" className="text-blue-400 hover:text-blue-300 underline">
-                  API Documentation →
-                </a>
-                <span className="text-zinc-400 ml-2">Complete reference for all RPC methods</span>
-              </li>
               <li>
                 <a href="/shred-api/code-examples" className="text-blue-400 hover:text-blue-300 underline">
                   Code Examples →
